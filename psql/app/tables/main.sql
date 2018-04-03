@@ -1,0 +1,9 @@
+\ir orgs.sql
+\ir apps.sql
+\ir owners.sql
+\ir logins.sql
+\ir repos.sql
+\ir builds.sql
+\ir releases.sql
+\ir teams.sql
+\ir members.sql
