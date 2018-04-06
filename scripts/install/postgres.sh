@@ -15,4 +15,6 @@ if [ "$res" = "" ]; then
   psql $cli_args -c 'create database hub;'
   psql $cli_args -d hub -f ../psql/hub/main.sql
 
+  psql $cli_args -c 'create database grafana;'
+
 fi

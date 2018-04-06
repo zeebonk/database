@@ -17,6 +17,9 @@ def index():
 def assets(path):
     return send_from_directory('assets', path)
 
+@app.route('/grafana/<path:path>')
+def send_grafana(path):
+    return send_from_directory('../grafana', path)
 
 @app.route('/healthcheck')
 def healthcheck():
