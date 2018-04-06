@@ -1,9 +1,9 @@
 \ir orgs.sql
-\ir apps.sql
 \ir owners.sql
-\ir tokens.sql
+\ir teams.sql
 \ir repos.sql
 \ir builds.sql
+\ir apps.sql
 \ir releases.sql
-\ir teams.sql
 \ir members.sql
+\ir tokens.sql

@@ -11,7 +11,7 @@ done
 
 cli_args="-h ${POSTGRES_HOST:-postgres} -U ${POSTGRES_USER:-postgres} -p ${POSTGRES_PORT:-5432} -v ON_ERROR_STOP=1"
 
-res=$(psql $cli_args -Atc "select version from app.version;" || echo '') 2>/dev/null
+res=$(psql $cli_args -Atc "select version from app_public.version;" || echo '')
 
 if [ "$res" = "" ]; then
 
