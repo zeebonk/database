@@ -2,7 +2,9 @@ create table repos(
   repoid                     serial primary key,
   ownerid                    int references owners on delete cascade not null,  -- slug:owner
   service_id                 text not null,
-  name                       citext,  -- slug:name
+  name                       citext not null,  -- slug:name
+  alias                      citext,
+  pull_url                   citext,
   github_using_installation  boolean not null default false
 );
 
@@ -10,10 +12,4 @@ create unique index repos_slug on repos (ownerid, name);
 
 create unique index repos_service_ids on repos (ownerid, service_id);
 
-
--- App can have N Repos
-create table app_repos(
-  appid                   int references apps on delete cascade not null,
-  repoid                  int references repos on delete cascade not null,
-  primary key (appid, repoid)
-);
+create unique index repos_alias on repos (alias);

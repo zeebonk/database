@@ -1,7 +1,11 @@
-create extension if not exists "uuid-ossp";
-create extension if not exists "citext";
+create schema app_public;
+set search_path to app_public;
 
-create table if not exists version (version text);
+create extension "pgcrypto" with schema app_public;
+create extension "uuid-ossp" with schema app_public;
+create extension "citext" with schema app_public;
+
+create table version (version text);
 
 \ir types.sql
 \ir tables/main.sql
