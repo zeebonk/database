@@ -1,5 +1,4 @@
 #! /bin/sh
-set -euo pipefail
 
 while true; do
   if curl -s "http://elasticsearch:9200/_cat/indices?v" | grep -q fluentd; then
