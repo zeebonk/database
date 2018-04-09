@@ -4,7 +4,7 @@ set search_path to hub_public;
 create extension if not exists "uuid-ossp" with schema hub_public;
 create extension if not exists "citext" with schema hub_public;
 
-create table version (version text);
+CREATE TABLE version (version text);
 insert into version values ('0.0.1');
 
 \ir types.sql

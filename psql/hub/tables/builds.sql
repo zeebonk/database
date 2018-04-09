@@ -1,4 +1,4 @@
-create table builds(
+CREATE TABLE builds(
   buildid                 serial primary key,
   starttime               timestamptz,  -- time started
   endtime                 timestamptz,  -- time ended

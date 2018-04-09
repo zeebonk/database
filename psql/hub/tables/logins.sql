@@ -1,4 +1,4 @@
-create table logins(
+CREATE TABLE logins(
   loginid                 serial primary key,
   ownerid                 int references owners on delete cascade not null,
   type                    login_type not null,

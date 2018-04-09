@@ -1,9 +1,18 @@
-create type service as enum('github');
+CREATE TYPE service as enum('github');
 
-create type login_type as enum('api', 'login');
+CREATE TYPE permission as enum('story:kill');
 
-create type release_state as enum('previous', 'active', 'next', 'rollback', 'queued');
+CREATE DOMAIN title as text
+  CHECK ( VALUE ~ '^\w[\w\-\.\s]{2,44}$' );
 
-create type build_state as enum('queued', 'building', 'success', 'failure', 'error');
+CREATE DOMAIN username as text
+  CHECK ( VALUE ~ '^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$' );
 
-create type permission as enum('story:kill');
+CREATE DOMAIN hostname as text
+  CHECK ( VALUE ~ '^((\*|[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$' );
+
+CREATE DOMAIN email AS citext
+  CHECK ( VALUE ~ '^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$' );
+
+CREATE DOMAIN sha as citext
+  CHECK ( VALUE ~ '^\w{40}$' );

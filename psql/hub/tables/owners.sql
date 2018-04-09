@@ -1,4 +1,4 @@
-create table owners(
+CREATE TABLE owners(
   ownerid                 serial primary key,
   service                 service not null,
   service_id              citext not null,  -- the GitHub Service ID
@@ -9,6 +9,6 @@ create table owners(
   github_installation_id  int  -- github integration id
 );
 
-create unique index owner_service_username on owners (service, username);
+CREATE UNIQUE INDEX owner_service_username on owners (service, username);
 
-create unique index owner_service_ids on owners (service, service_id);
+CREATE UNIQUE INDEX owner_service_ids on owners (service, service_id);

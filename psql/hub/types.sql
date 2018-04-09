@@ -1,7 +1,7 @@
-create type service as enum ('github');
+CREATE TYPE service as enum ('github');
 
-create type login_type as enum('api', 'login');
+CREATE TYPE login_type as enum('api', 'login');
 
-create type release_state as enum('active', 'rolling-up', 'rolling-back', 'a/b');
+CREATE TYPE release_state as enum('active', 'rolling-up', 'rolling-back', 'a/b');
 
-create type build_state as enum('queued', 'building', 'success', 'failure', 'error');
+CREATE TYPE build_state as enum('queued', 'building', 'success', 'failure', 'error');
