@@ -16,3 +16,6 @@ CREATE DOMAIN email AS citext
 
 CREATE DOMAIN sha as citext
   CHECK ( VALUE ~ '^\w{40}$' );
+
+CREATE DOMAIN alias as citext
+  CHECK ( VALUE ~ '^[\w\-\.]{2,24}$' );

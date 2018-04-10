@@ -1,4 +1,4 @@
-# Asyncy App
+# Asyncy App & Hub
 
 ## Organizations
 - Has N Applications

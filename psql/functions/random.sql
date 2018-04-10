@@ -5,15 +5,12 @@ CREATE TABLE words(
   type                word_pos not null
 );
 
-
-create function random_word() returns text as $$
+CREATE FUNCTION random_word() returns text as $$
   select (
       (select word from app_public.words where type='left' order by random() limit 1)
       || '-' ||
       (select word from app_public.words where type='right' order by random() limit 1)
   ) $$ language sql;
-
-
 
 INSERT INTO words values
   ('admiring', 'left'),

@@ -14,13 +14,8 @@ cli_args="-h ${POSTGRES_HOST:-postgres} -U ${POSTGRES_USER:-postgres} -p ${POSTG
 res=$(psql $cli_args -Atc "select version from app_public.version;" || echo '')
 
 if [ "$res" = "" ]; then
-
   echo '===> Setting up PostgreSQL'
-
-  psql $cli_args -f ../psql/app/main.sql
-
-  psql $cli_args -f ../psql/hub/main.sql
-
+  psql $cli_args -f ../psql/main.sql
 fi
 
 res=$(psql $cli_args -Atc "select datname from pg_database where datistemplate = false and datname='grafana';")
