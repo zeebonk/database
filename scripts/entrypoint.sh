@@ -17,7 +17,6 @@ echo '
 
 # Install
 ./scripts/install/postgres.sh
-./scripts/install/kibana.sh
 
 
 # Upgrade
