@@ -8,3 +8,5 @@
 \ir releases.sql
 \ir members.sql
 \ir tokens.sql
+\ir plans.sql
+\ir subscriptions.sql
