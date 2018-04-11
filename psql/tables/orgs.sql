@@ -1,7 +1,7 @@
 CREATE TABLE orgs(
   id                      serial primary key,
   name                    title not null
-);
+) without oids;
 COMMENT on table orgs is 'An organization is a collection of many teams, apps and repositories.';
 
 CREATE TYPE billing_region as enum('us', 'eu');
@@ -14,7 +14,7 @@ CREATE TABLE org_billing(
   email                   email,
   address                 text,
   vat                     text
-);
+) without oids;
 
 -- TODO org_admins
 

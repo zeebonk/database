@@ -7,7 +7,7 @@ CREATE TABLE tokens(
   name                    title,
   expires                 timestamp,  -- check must be future
   permissions             permission[]
-);
+) without oids;
 COMMENT on column tokens.id is 'The token itself that is shared with the user.';
 COMMENT on column tokens.type is 'User login, api token, or application link.';
 COMMENT on column tokens.name is 'A custom title for the login.';

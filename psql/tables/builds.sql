@@ -7,7 +7,7 @@ CREATE TABLE builds(
   sha                     sha not null,
   state                   build_state not null,
   primary key (id, repo_id)
-);
+) without oids;
 COMMENT on table builds is 'Building results from an Application.';
 COMMENT on column builds.timestamp is 'Date the build started.';
 COMMENT on column builds.sha is 'The commit id of the build being tested.';

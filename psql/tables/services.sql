@@ -6,7 +6,7 @@ CREATE TABLE services(
   pull_url                   citext,
   topics                     text[],
   state                      service_state
-);
+) without oids;
 COMMENT on column services.alias is 'The namespace reservation for the container';
 COMMENT on column services.pull_url is 'Address where the container can be pulled from.';
 COMMENT on column services.topics is 'GitHub repository topics for searching services.';

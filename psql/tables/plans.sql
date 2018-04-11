@@ -8,7 +8,7 @@ CREATE TABLE plans(
   price_type                 plan_price_type not null,
   price_per                  int CHECK (price_per >= 0) not null,
   price_rate                 numeric CHECK (price_rate >= 0) not null
-);
+) without oids;
 COMMENT on table plans is 'Premium service plans.';
 COMMENT on column plans.service_id is 'The service that owns this plan.';
 COMMENT on column plans.title is 'A short name for the plan.';

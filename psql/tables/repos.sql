@@ -6,7 +6,7 @@ CREATE TABLE repos(
   name                       username,
   github_using_installation  boolean not null default false,
   webhook_id                 citext
-);
+) without oids;
 COMMENT on column repos.owner_id is 'The GitHub Organization that owns this repository.';
 COMMENT on column repos.service is 'The repositorys service provider.';
 COMMENT on column repos.service_id is 'The unique GitHub id of the repository.';
