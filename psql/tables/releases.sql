@@ -22,7 +22,7 @@ COMMENT on column releases.payload is 'An object containing the full payload of 
 
 CREATE FUNCTION releases_next_id() returns trigger as $$
   begin
-    new.id := greatest((select max(id) from releases where app_id=new.app_id), 0) + 1;
+    new.id := coalesce((select max(id) from releases where app_id=new.app_id), 0) + 1;
     return new;
   end;
 $$ language plpgsql;
