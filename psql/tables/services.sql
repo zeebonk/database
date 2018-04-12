@@ -1,7 +1,7 @@
 CREATE TYPE service_state as enum('stable', 'development', 'archived');
 CREATE TABLE services(
-  id                         serial primary key,
-  repo_id                    int references repos on delete cascade not null,
+  uuid                       uuid default uuid_generate_v4() primary key,
+  repo_uuid                  uuid references repos on delete cascade not null,
   alias                      alias unique,
   pull_url                   citext,
   topics                     text[],

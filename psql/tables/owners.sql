@@ -1,5 +1,5 @@
 CREATE TABLE owners(
-  id                      serial primary key,
+  uuid                    uuid default uuid_generate_v4() primary key,
   service                 service not null default 'github'::service,
   service_id              citext not null,
   is_user                 boolean not null default true,
