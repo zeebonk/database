@@ -15,11 +15,11 @@ COMMENT on column builds.state is 'The state of the build.';
 
 CREATE FUNCTION builds_next_id() returns trigger as $$
   begin
-    new.id := greatest((select max(id) from builds where repo_id=new.repo_id), 0) + 1;
+    new.id := coalesce((select max(id) from builds where repo_id=new.repo_id), 0) + 1;
     return new;
   end;
 $$ language plpgsql;
 
 
-CREATE TRIGGER builds_next_id_insert before insert on builds
+CREATE TRIGGER _100_builds_next_id_insert before insert on builds
   for each row execute procedure builds_next_id();
