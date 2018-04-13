@@ -14,7 +14,7 @@ COMMENT on column tokens.name is 'A custom title for the login.';
 COMMENT on column tokens.expires is 'Date the token should expire on.';
 COMMENT on column tokens.permissions is 'List of permissions this token has privileges too.';
 
-create index token_owners on tokens (owner_uuid);
+CREATE INDEX token_owners on tokens (owner_uuid);
 
 CREATE TRIGGER _100_insert_assert_permissions_exist before insert on tokens
   for each row

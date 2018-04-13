@@ -2,10 +2,10 @@ CREATE TABLE repos(
   uuid                       uuid default uuid_generate_v4() primary key,
   owner_uuid                 uuid references owners on delete cascade not null,
   service                    service not null default 'github'::service,
-  service_id                 citext unique not null,
+  service_id                 citext unique CHECK (LENGTH(service_id) < 45) not null,
   name                       username,
   github_using_installation  boolean not null default false,
-  webhook_id                 citext
+  webhook_id                 citext CHECK (LENGTH(webhook_id) < 30)
 ) without oids;
 COMMENT on column repos.owner_uuid is 'The GitHub Organization that owns this repository.';
 COMMENT on column repos.service is 'The repositorys service provider.';

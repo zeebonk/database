@@ -9,11 +9,11 @@ CREATE TYPE billing_region as enum('us', 'eu');
 CREATE TABLE organization_billing(
   org_id                  uuid primary key references organizations on delete cascade,
   region                  billing_region,
-  customer                text CHECK (customer ~ '^cust_\w+$'),
-  subscription            text CHECK (customer ~ '^sub_\w+$'),
+  customer                varchar(45) CHECK (customer ~ '^cust_\w+$'),
+  subscription            varchar(45) CHECK (customer ~ '^sub_\w+$'),
   email                   email,
-  address                 text,
-  vat                     text
+  address                 varchar(45),
+  vat                     varchar(45)
 ) without oids;
 
 -- TODO org_admins
@@ -25,5 +25,5 @@ CREATE TABLE organization_billing(
 --   serviceid               int references hub_public.service_plans not null,
 --   appid                   int references apps,
 --   quantity                int CHECK (quantity > 0),
---   config                  json
+--   config                  jsonb
 -- );
