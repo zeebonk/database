@@ -6,9 +6,9 @@ CREATE TABLE owners(
   username                username not null,
   email                   email,
   name                    title not null,
-  oauth_token             text,
+  oauth_token             varchar(45),
   github_installation_id  int,
-  permissions             permission[]
+  permissions             uuid[]
 ) without oids;
 COMMENT on column owners.service is 'GitHub or another provider';
 COMMENT on column owners.service_id is 'The providers unique id';
@@ -22,3 +22,13 @@ COMMENT on index owner_service_username is 'Can only have one service:username p
 
 CREATE UNIQUE INDEX owner_service_ids on owners (service, service_id);
 COMMENT on index owner_service_ids is 'Can only have one service:service_id pair.';
+
+CREATE TRIGGER _100_insert_assert_permissions_exist before insert on owners
+  for each row
+  when (array_length(new.permissions, 1) > 0)
+  execute procedure assert_permissions_exist();
+
+CREATE TRIGGER _100_update_assert_permissions_exist before update on owners
+  for each row
+  when (new.permissions is distinct from old.permissions and array_length(new.permissions, 1) > 0)
+  execute procedure assert_permissions_exist();
