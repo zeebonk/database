@@ -7,14 +7,14 @@ CREATE TABLE tokens(
   name                    title,
   expires                 timestamp,  -- check must be future
   permissions             uuid[]
-) without oids;
+);
 COMMENT on column tokens.uuid is 'The token itself that is shared with the user.';
 COMMENT on column tokens.type is 'User login, api token, or application link.';
 COMMENT on column tokens.name is 'A custom title for the login.';
 COMMENT on column tokens.expires is 'Date the token should expire on.';
 COMMENT on column tokens.permissions is 'List of permissions this token has privileges too.';
 
-CREATE INDEX token_owners on tokens (owner_uuid);
+CREATE INDEX token_owner_uuid_fk on tokens (owner_uuid);
 
 CREATE TRIGGER _100_insert_assert_permissions_exist before insert on tokens
   for each row

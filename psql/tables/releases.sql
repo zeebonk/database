@@ -10,7 +10,7 @@ CREATE TABLE releases(
   state                   release_state not null default 'queued'::release_state,
   payload                 jsonb not null,
   primary key (id, app_uuid)
-) without oids;
+);
 COMMENT on table releases is 'Identifying the active version of the application.';
 COMMENT on column releases.app_uuid is 'The application this release belongs to.';
 COMMENT on column releases.config is 'Configuration of the release.';

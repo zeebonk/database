@@ -5,13 +5,15 @@ CREATE TABLE teams(
   service                 service not null default 'github'::service,
   service_id              citext CHECK (LENGTH(service_id) < 45) not null,
   permissions             uuid[]
-) without oids;
+);
 COMMENT on column teams.owner_uuid is 'The GitHub Organization that this team belong to.';
 COMMENT on column teams.name is 'The title of the Team.';
 COMMENT on column teams.service_id is 'The GitHub unique service id.';
 COMMENT on column teams.permissions is 'A list of permissions this team has permission to.';
 
 CREATE UNIQUE INDEX teams_service_ids on teams (service, service_id);
+
+CREATE INDEX teams_owner_uuid_fk on teams (owner_uuid);
 
 CREATE TRIGGER _100_insert_assert_permissions_exist before insert on teams
   for each row

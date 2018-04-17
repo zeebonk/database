@@ -1,7 +1,7 @@
 CREATE TABLE permissions(
   uuid                       uuid default uuid_generate_v4() primary key,
   title                      title not null
-) without oids;
+);
 COMMENT on column permissions.title is 'Short description of the permission.';
 
 

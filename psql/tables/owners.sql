@@ -9,7 +9,7 @@ CREATE TABLE owners(
   oauth_token             varchar(45),
   github_installation_id  int,
   permissions             uuid[]
-) without oids;
+);
 COMMENT on column owners.service is 'GitHub or another provider';
 COMMENT on column owners.service_id is 'The providers unique id';
 COMMENT on column owners.username is 'The handler name to the provider service';
