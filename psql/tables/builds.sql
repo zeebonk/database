@@ -1,10 +1,10 @@
 CREATE TABLE builds(
-  id                      int CHECK (id > 0) not null,
   repo_uuid               uuid references repos on delete cascade not null,
+  id                      int CHECK (id > 0) not null,
   timestamp               timestamptz not null,
   sha                     sha not null,
   state                   build_state not null,
-  primary key (id, repo_uuid)
+  primary key (repo_uuid, id)
 );
 COMMENT on table builds is 'Building results from an Application.';
 COMMENT on column builds.timestamp is 'Date the build started.';
