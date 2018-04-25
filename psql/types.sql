@@ -22,3 +22,7 @@ CREATE DOMAIN url as citext
   CHECK ( LENGTH(VALUE) <= 256 and VALUE ~ '^https?://');
 
 CREATE TYPE billing_region as enum('us', 'eu');
+
+CREATE TYPE service_state as enum('development', 'prerelease', 'beta', 'stable', 'archived');
+
+CREATE TYPE build_state as enum('queued', 'building', 'success', 'failure', 'error');

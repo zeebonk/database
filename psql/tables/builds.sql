@@ -1,5 +1,3 @@
-CREATE TYPE build_state as enum('queued', 'building', 'success', 'failure', 'error');
-
 CREATE TABLE builds(
   id                      int CHECK (id > 0) not null,
   repo_uuid               uuid references repos on delete cascade not null,
