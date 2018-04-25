@@ -10,7 +10,7 @@ CREATE TABLE organization_billing(
   customer                varchar(45) CHECK (customer ~ '^cust_\w+$'),
   subscription            varchar(45) CHECK (customer ~ '^sub_\w+$'),
   email                   email,
-  address                 varchar(45),
+  address                 varchar(512),
   vat                     varchar(45)
 );
 
