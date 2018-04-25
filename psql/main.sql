@@ -7,7 +7,7 @@ SET search_path to app_public, public;
 
 
 CREATE TABLE version (
-  version             text CHECK (version ~ '^\d+\.\d+\.\d+$')
+  version             text CHECK (version ~ '^\d+\.\d+\.\d+$') primary key
 );
 INSERT INTO version values ('0.0.1');
 
