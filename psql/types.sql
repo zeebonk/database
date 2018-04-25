@@ -20,3 +20,5 @@ CREATE DOMAIN alias as citext
 
 CREATE DOMAIN url as citext
   CHECK ( LENGTH(VALUE) <= 256 and VALUE ~ '^https?://');
+
+CREATE TYPE billing_region as enum('us', 'eu');

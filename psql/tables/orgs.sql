@@ -4,8 +4,6 @@ CREATE TABLE organizations(
 );
 COMMENT on table organizations is 'An organization is a collection of many teams, apps and repositories.';
 
-CREATE TYPE billing_region as enum('us', 'eu');
-
 CREATE TABLE organization_billing(
   organization_uuid       uuid primary key references organizations on delete cascade,
   region                  billing_region,
