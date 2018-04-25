@@ -3,7 +3,7 @@ CREATE TABLE repos(
   owner_uuid                 uuid references owners on delete cascade not null,
   service                    service not null default 'github'::service,
   service_id                 citext unique CHECK (LENGTH(service_id) < 45) not null,
-  name                       username,
+  name                       username not null,
   github_using_installation  boolean not null default false,
   webhook_id                 citext CHECK (LENGTH(webhook_id) < 30)
 );
