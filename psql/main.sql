@@ -1,9 +1,10 @@
-CREATE SCHEMA app_public;
-SET search_path to app_public;
+CREATE EXTENSION "pgcrypto" WITH SCHEMA public;
+CREATE EXTENSION "uuid-ossp" WITH SCHEMA public;
+CREATE EXTENSION "citext" WITH SCHEMA public;
 
-CREATE EXTENSION "pgcrypto" with schema app_public;
-CREATE EXTENSION "uuid-ossp" with schema app_public;
-CREATE EXTENSION "citext" with schema app_public;
+CREATE SCHEMA app_public;
+SET search_path to app_public, public;
+
 
 CREATE TABLE version (
   version             text CHECK (version ~ '^\d+\.\d+\.\d+$')
