@@ -14,8 +14,6 @@ CREATE TABLE organization_billing(
   vat                     varchar(45)
 );
 
-CREATE INDEX organization_billing_organization_uuid_fk on organization_billing (organization_uuid);
-
 
 -- TODO org_admins
 
