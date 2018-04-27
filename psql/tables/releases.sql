@@ -5,7 +5,7 @@ CREATE TABLE releases(
   message                 text CHECK (LENGTH(message) < 1000) not null,
   owner_uuid              uuid references owners on delete set null,
   timestamp               timestamptz not null,
-  state                   release_state not null default 'queued'::release_state,
+  state                   release_state not null default 'QUEUED'::release_state,
   payload                 jsonb not null,
   primary key (app_uuid, id)
 );

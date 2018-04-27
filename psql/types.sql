@@ -21,12 +21,12 @@ CREATE DOMAIN alias as citext
 CREATE DOMAIN url as citext
   CHECK ( LENGTH(VALUE) <= 256 and VALUE ~ '^https?://');
 
-CREATE TYPE billing_region as enum('us', 'eu');
+CREATE TYPE billing_region as enum('US', 'EU');
 
-CREATE TYPE service_state as enum('development', 'prerelease', 'beta', 'stable', 'archived');
+CREATE TYPE service_state as enum('DEVELOPMENT', 'PRERELEASE', 'BETA', 'STABLE', 'ARCHIVED');
 
-CREATE TYPE build_state as enum('queued', 'building', 'success', 'failure', 'error');
+CREATE TYPE build_state as enum('QUEUED', 'BUILDING', 'SUCCESS', 'FAILURE', 'ERROR');
 
-CREATE TYPE release_state as enum('previous', 'active', 'next', 'rollback', 'queued');
+CREATE TYPE release_state as enum('PREVIOUS', 'ACTIVE', 'NEXT', 'ROLLBACK', 'QUEUED');
 
-CREATE TYPE token_type as enum('api', 'login', 'app');
+CREATE TYPE token_type as enum('API', 'LOGIN', 'APP');
