@@ -1,13 +1,13 @@
 CREATE TABLE releases(
-  id                      int CHECK (id > 0) not null,
   app_uuid                uuid references apps on delete cascade not null,
+  id                      int CHECK (id > 0) not null,
   config                  jsonb,
   message                 text CHECK (LENGTH(message) < 1000) not null,
   owner_uuid              uuid references owners on delete set null,
   timestamp               timestamptz not null,
   state                   release_state not null default 'queued'::release_state,
   payload                 jsonb not null,
-  primary key (id, app_uuid)
+  primary key (app_uuid, id)
 );
 COMMENT on table releases is 'Identifying the active version of the application.';
 COMMENT on column releases.app_uuid is 'The application this release belongs to.';
