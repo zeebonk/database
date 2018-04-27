@@ -1,5 +1,3 @@
-CREATE TYPE release_state as enum('previous', 'active', 'next', 'rollback', 'queued');
-
 CREATE TABLE releases(
   id                      int CHECK (id > 0) not null,
   app_uuid                uuid references apps on delete cascade not null,

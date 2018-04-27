@@ -26,3 +26,5 @@ CREATE TYPE billing_region as enum('us', 'eu');
 CREATE TYPE service_state as enum('development', 'prerelease', 'beta', 'stable', 'archived');
 
 CREATE TYPE build_state as enum('queued', 'building', 'success', 'failure', 'error');
+
+CREATE TYPE release_state as enum('previous', 'active', 'next', 'rollback', 'queued');
