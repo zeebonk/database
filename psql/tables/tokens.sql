@@ -1,4 +1,4 @@
-CREATE TABLE tokens(
+CREATE TABLE app_private.tokens(
   uuid                    uuid default uuid_generate_v4() primary key,
   owner_uuid              uuid references owners on delete cascade not null,
   type                    token_type not null,
