@@ -1,5 +1,3 @@
-CREATE TYPE token_type as enum('api', 'login', 'app');
-
 CREATE TABLE tokens(
   uuid                    uuid default uuid_generate_v4() primary key,
   owner_uuid              uuid references owners on delete cascade not null,

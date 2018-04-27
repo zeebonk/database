@@ -28,3 +28,5 @@ CREATE TYPE service_state as enum('development', 'prerelease', 'beta', 'stable',
 CREATE TYPE build_state as enum('queued', 'building', 'success', 'failure', 'error');
 
 CREATE TYPE release_state as enum('previous', 'active', 'next', 'rollback', 'queued');
+
+CREATE TYPE token_type as enum('api', 'login', 'app');
