@@ -5,14 +5,11 @@ Output https://gist.github.com/stevepeak/efa3cae2ee02fc505925cf22dedfea18
 ###
 
 # make sure the repo is registed
-# make sure the user has permission SSH keys
 # assert git history else require a force push
-# only accept master branch?
-
 # insert release into database
 # get app from database
-res = graphql 
-app = 
+res = graphql
+app =
 
 try
     git clone --depth=1 repo.slug `/repo`
@@ -28,11 +25,11 @@ try
 
     # write environment
     file write app.environment `/app/env.json`
-    
+
     # create release pod
     # create volume
     # move assets
-    
+
     # find all containers in the stories
     # pull containers
     #   if not exist add to our registry from docker
@@ -48,5 +45,3 @@ try
 except
     # update release as a failure
     # update github release
-   
-
