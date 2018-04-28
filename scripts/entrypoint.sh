@@ -18,9 +18,13 @@ echo '
 # Install
 ./scripts/install/postgres.sh
 
+# Parse Asyncy's backend Stories
+echo '===> Preparing Asyncy backend'
+storyscript parse --join ./stories > /app/stories.json
 
-# Upgrade
-
+# Start the primary Engine
+echo '===> Starting primary Engine'
+# [TODO]
 
 # Run
 echo '===> Running Flask server'
