@@ -17,6 +17,7 @@ def index():
 def assets(path):
     return send_from_directory('assets', path)
 
+
 @app.route('/healthcheck')
 def healthcheck():
     res = envoy.run('../scripts/healthcheck.sh')
