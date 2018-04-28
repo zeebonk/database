@@ -1,6 +1,6 @@
 CREATE TABLE releases(
   app_uuid                uuid references apps on delete cascade not null,
-  id                      int CHECK (id > 0) not null,
+  id                      int CHECK (id > 0) not null default 1,
   config                  jsonb,
   message                 text CHECK (LENGTH(message) < 1000) not null,
   owner_uuid              uuid references owners on delete set null,
