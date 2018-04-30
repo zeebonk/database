@@ -1,6 +1,6 @@
 CREATE TABLE builds(
   repo_uuid               uuid references repos on delete cascade not null,
-  id                      int CHECK (id > 0) not null default 1,
+  id                      int CHECK (id > 0) not null default 0,
   timestamp               timestamptz not null,
   sha                     sha not null,
   state                   build_state not null,
