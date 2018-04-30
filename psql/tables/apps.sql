@@ -12,10 +12,8 @@ CREATE INDEX apps_repo_uuid_fk on apps (repo_uuid);
 CREATE TABLE app_dns(
   hostname                hostname primary key,
   app_uuid                uuid references apps on delete cascade not null,
-  validated               boolean default false not null
+  is_validated            boolean default false not null
 );
 COMMENT on table app_dns is 'Apps may have many DNS endpoints that resolve to the application.';
 COMMENT on column app_dns.hostname is 'A full hostname entry such as foobar.asyncyapp.com, example.com or *.everything.com';
 COMMENT on column app_dns.validated is 'If dns resolves properly from registry.';
-
-CREATE INDEX apps_app_uuid_fk on apps (app_uuid);

@@ -1,14 +1,15 @@
+CREATE EXTENSION "pgcrypto" WITH SCHEMA public;
+CREATE EXTENSION "uuid-ossp" WITH SCHEMA public;
+CREATE EXTENSION "citext" WITH SCHEMA public;
+
 CREATE SCHEMA app_public;
-SET search_path to app_public;
+CREATE SCHEMA app_private;
+SET search_path to app_public, app_private, public;
 
-CREATE EXTENSION "pgcrypto" with schema app_public;
-CREATE EXTENSION "uuid-ossp" with schema app_public;
-CREATE EXTENSION "citext" with schema app_public;
-
-CREATE TABLE version (
-  version             text CHECK (version ~ '^\d+\.\d+\.\d+$')
+CREATE TABLE app_private.version (
+  version             text CHECK (version ~ '^\d+\.\d+\.\d+$') primary key
 );
-INSERT INTO version values ('0.0.1');
+INSERT INTO app_private.version values ('0.0.1');
 
 \ir types.sql
 \ir tables/main.sql

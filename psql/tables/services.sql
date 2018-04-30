@@ -1,5 +1,3 @@
-CREATE TYPE service_state as enum('development', 'prerelease', 'beta', 'stable', 'archived');
-
 CREATE TABLE services(
   uuid                       uuid default uuid_generate_v4() primary key,
   repo_uuid                  uuid references repos on delete cascade not null,

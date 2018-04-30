@@ -1,7 +1,7 @@
 CREATE TABLE subscriptions(
   uuid                       uuid default uuid_generate_v4() primary key,
   organization_uuid          uuid references organizations on delete cascade not null,
-  plan_uuid                  uuid references plans not null,
+  plan_uuid                  uuid references plans on delete restrict not null,
   app_uuid                   uuid references repos on delete cascade
 );
 COMMENT on table subscriptions is 'An organization subscriptions to servies.';
