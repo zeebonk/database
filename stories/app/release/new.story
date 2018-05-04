@@ -37,7 +37,7 @@ with repository:object, output:function
 
     try
         output message:'-----> Preparing'
-        git_dir = `~/tmp/git/{{data.repo}}.git`
+        git_dir = `~/git/{{data.repo}}.git`
         if (file exists dir:git_dir)
             output message:'       Extracting git contents'
             git checkout branch:master git_dir:git_dir work_tree:`/app`
