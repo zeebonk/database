@@ -1,153 +1,112 @@
 ###
 Deploying a new release to Asyncy
+
   event = {
     data: {
       repo: "myapp",
       commit: "sha",
-      branch:  "master"
+      branch:  "master",
+      user: null           # todo
     },
     write(data:string)
     error(code:int, message:string)
     finish()
   }
+
 ###
 
-function New event:object
+function NewRelease event:object ->
 
-    production = false
     # [TODO] make sure the repo is registered
     # [TODO] assert git history else require a force push
     # [TODO] get author
 
     ghse = '/repos/{{repo.slug}}/commits/{{event.data.sha}}/statuses'
 
-    if production
-        # [TODO] insert release into database get app from database
-        # res = graphql
-        # repo =
-        # app =
-        # release =
-
-        github method:post endpoint:ghse
-               data:{
-                 'context': 'asyncy/deploy'
-               }
-        # https://developer.github.com/v3/repos/deployments/#create-a-deployment
-        github method:post
-               endpoint:'/repos/{{repo.slug}}/deployments'
-               data:{
-                  'ref': event.data.sha,
-                  'task': 'deploy'
-                  'required_contexts': ['asyncy/deploy'],
-                  'auto_merge': false,
-                  'environment': 'production',
-                  'description': 'Release v{{release.id}} by @{{author.username}}'
-              }
+    # [TODO] insert release into database get app from database
+    # res = graphql
+    # repo =
+    # app =
+    # release =
+    github method:'post' endpoint:ghse
+           data:{
+             'state': 'pending',
+             'target_url': null,
+             'description': 'Building application...',
+             'context': 'asyncy/deploy'
+           }
 
     try
-        event.write data:'-----> Preparing'
-        git_dir = `~/git/{{event.data.repo}}.git`
-        if (file exists dir:git_dir)
-            event.write data:'       Extracting git contents'
-            git checkout branch:master git_dir:git_dir work_tree:`/app`
-            file remove path:git_dir
-
+        event write '-----> Preparing'
+        git_dir = file '~/git/{{event.data.repo}}'
+        if (git_dir exists)
+            git_dir move '/app'
         else
-            event.write data:'       Cloning repository'
+            event write '       Cloning repository'
             git clone url:repo.slug dest:`/app` depth:1
             file remove path:`/app/.git`
 
-        if (file exists path:`/app/.slugignore`)
-            event.write data:'       Removing files from .slugignore'
-            file remove globs:(file readlines `/app/.slugignore`)
+        if (file exists path:'/app/.slugignore')
+            event write '       Removing files from .slugignore'
+            file remove globs:(file readlines '/app/.slugignore')
 
-        event.write data:'       Compiling Stories'
+        event write '       Compiling Stories'
         # process stories into a single json file
-        stories = storyscript build dir:`/app`
-        file write data:stories path:`/config/stories.json`
+        application = storyscript parse target:'/app' json:true
+        file write data:application path:'/release/application.json'
 
         # process asyncy.yml
-        if (file exists path:`/app/asyncy.yml`)
-            event.write data:'       Processing asyncy.yml'
-            config = yaml path:`/app/asyncy.yml`
-                          validate:`~/assets/schemas/config.json`
-            file write data:config path:`/config/asyncy.json`
+        if (file exists path:'/app/asyncy.yml')
+            event write '       Processing asyncy.yml'
+            config = yaml path:'/app/asyncy.yml'
+                          validate:'~/assets/schemas/config.json'
+            file write data:config path:'/release/config.json'
         else
-            event.write data:'       No asyncy.yml found... Ok'
+            event write '       No asyncy.yml found... Ok'
 
-        if production
-            event.write data:'       Adding environment'
-            file write data:app.environment
-                       path:`/config/env.json`
+        event write '       Adding environment'
+        file write data:app.environment
+                   path:'/release/environment.json'
 
-        event.write data:'       Done.'
-        event.write data:''
+        event write '       Done.\n'
+        event write '-----> Building'
 
-        event.write data:'-----> Building'
+        event write '       Creating deployment pod'
+        # kubectl ...
 
-        if production
-            event.write data:'       Creating deployment pod'
-            # kubectl ...
+        event write '       Creating deployment volume'
+        # volume = kubectl ...
 
-            event.write data:'       Creating deployment volume'
-            # volume = kubectl ...
+        event write '       Copying assets into volume'
+        file copy from:'/app' to:'{{volume}}:/'
 
-            event.write data:'       Copying assets into volume'
-            file copy from:`/app` to:`{{volume}}:/`
+        event write '       Creating engine'
+        # [TODO] start engine (docker run -e app_env -v app_volume:/app ...)
 
-        # [TODO] graphql each service config
-        # [TODO] adjust containers based on release tags
-        #        for now we pull latest every time
-        # [TODO] add the container to our registry
-        event.write data:'       Pulling containers'
-        foreach stories.services as service
-            docker pull name:service
+        event write '       Pulling containers'
+        foreach application.services as service
+            # [TODO] these should pull from Asyncy Registry and not Docker Hub
+            docker pull image:config.services[service].image
 
-        event.write data:'-----> Deploying'
-        if production
-            event.write data:'       Starting engine'
-            # start engine (docker run -e app_env -v app_volume:/app ...)
-        else
-            docker restart container:'engine'
-
-        # start containers (standby mode)
-        event.write data:'       Starting containers'
-        foreach stories.services as service
+        event write '       Starting services'
+        # [TODO] graphql to get all servie configurations
+        foreach application.services as service
             # [TODO] attach necessary volumes (e.g., machinebox)
             # [TODO] custom startup commands (e.g., machinebox)
+            # start containers (standby mode)
             docker run detach:1
                        entrypoint:'tail -f /dev/null'
-                       image:service
+                       image:config.services[service].image
                        name:'service-{{service}}'
 
-        event.write data:'       Discovering http routes'
-        foreach stories as story
-            foreach story.tree.script as ln, line
-                if line.parent is null and line.container == 'http'
-                    engine exec story:story line:ln
+        event write '       Starting Application'
+        # [TODO] run through all stories in the engine
 
-        # [TODO] start crons
-
-        event.write data:'       Done.'
-        event.write data:''
-        event.write data:'-----> Verifying Deployment'
-
-        if production
-            event.write data:'       Release v{{release.id}}'
-            github method:post endpoint:ghse
-                   data:{
-                     'context': 'asyncy/deploy'
-                   }
-
-        event.write data:'       Success!'
+        event write '       Done.\n'
+        event write '-----> Complete'
+        event write '       Release v{{release.id}}'
+        event write '       Success!'
 
     except
-        if production
-            # graphql ...
-
-            github method:post endpoint:ghse
-                   data:{
-                     'context': 'asyncy/deploy'
-                   }
-
+        # [TODO] graphql ...
         raise
