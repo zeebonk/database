@@ -1,4 +1,4 @@
-CREATE TYPE service as enum('github');
+CREATE TYPE git_service as enum('github');
 
 CREATE DOMAIN title as citext
   CHECK ( LENGTH(VALUE) > 1 AND LENGTH(VALUE) < 25 AND VALUE ~ '^\w[\w\-\.\s]{2,44}$' );

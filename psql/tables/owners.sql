@@ -1,6 +1,6 @@
 CREATE TABLE owners(
   uuid                    uuid default uuid_generate_v4() primary key,
-  service                 service not null default 'github'::service,
+  service                 git_service not null default 'github'::git_service,
   service_id              citext not null,
   is_user                 boolean not null default true,
   username                username not null,

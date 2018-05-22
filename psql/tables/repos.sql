@@ -1,7 +1,7 @@
 CREATE TABLE repos(
   uuid                       uuid default uuid_generate_v4() primary key,
   owner_uuid                 uuid references owners on delete cascade not null,
-  service                    service not null default 'github'::service,
+  service                    git_service not null default 'github'::git_service,
   service_id                 citext unique CHECK (LENGTH(service_id) < 45) not null,
   name                       username not null,
   using_github_installation  boolean not null default false,
