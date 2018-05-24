@@ -15,9 +15,9 @@ CREATE INDEX services_repo_uuid_fk on services (repo_uuid);
 CREATE TYPE service_state as enum('DEVELOPMENT', 'PRERELEASE', 'BETA', 'STABLE', 'ARCHIVED');
 
 CREATE TABLE service_tags(
-  id                         citext primary key,
+  tag                        citext primary key,
   service_uuid               uuid references services on delete cascade not null,
-  state                      service_state,
+  state                      service_state not null,
   configuration              jsonb,
   readme                     text
 );
