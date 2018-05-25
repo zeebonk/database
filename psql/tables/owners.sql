@@ -5,7 +5,7 @@ CREATE TABLE owners(
   is_user                 boolean not null default true,
   username                username not null,
   name                    title not null,
-  github_installation_id  int
+  github_installation_id  int default null
 );
 COMMENT on column owners.service is 'GitHub or another provider';
 COMMENT on column owners.service_id is 'The providers unique id';
