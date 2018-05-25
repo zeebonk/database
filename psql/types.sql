@@ -4,7 +4,7 @@ CREATE DOMAIN title as citext
   CHECK ( LENGTH(VALUE) > 1 AND LENGTH(VALUE) < 25 AND VALUE ~ '^\w[\w\-\.\s]{2,44}$' );
 
 CREATE DOMAIN username as text
-  CHECK ( LENGTH(VALUE) >= 3 AND LENGTH(VALUE) <= 40 AND VALUE ~ '^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$' );
+  CHECK (LENGTH(VALUE) <= 40 AND VALUE ~ '^[\w\-]{1,40}$' );
 
 CREATE DOMAIN hostname as text
   CHECK ( LENGTH(VALUE) > 7 AND LENGTH(VALUE) < 25 AND VALUE ~ '^((\*|[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$' );
