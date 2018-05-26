@@ -1,14 +1,18 @@
 CREATE TABLE services(
   uuid                       uuid default uuid_generate_v4() primary key,
   repo_uuid                  uuid references repos on delete cascade not null,
+  title                      title,
+  description                text,
   alias                      alias unique,
   pull_url                   url,
   topics                     citext[],
-  description                text
+  is_certified               boolean not null default false,
+  links                      jsonb
 );
 COMMENT on column services.alias is 'The namespace reservation for the container';
 COMMENT on column services.pull_url is 'Address where the container can be pulled from.';
 COMMENT on column services.topics is 'GitHub repository topics for searching services.';
+COMMENT on column services.links is 'Custom links';
 
 CREATE INDEX services_repo_uuid_fk on services (repo_uuid);
 
@@ -18,7 +22,7 @@ CREATE TABLE service_tags(
   tag                        citext not null,
   service_uuid               uuid references services on delete cascade not null,
   state                      service_state not null,
-  configuration              jsonb,
+  configuration              jsonb not null,
   readme                     text,
   primary key (tag, service_uuid)
 );
