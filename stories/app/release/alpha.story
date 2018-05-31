@@ -45,6 +45,7 @@ function NewRelease event:object ->
         # [TODO] custom startup commands (e.g., machinebox)
         docker run detach:1
                    entrypoint:'tail -f /dev/null'
+                   volume:'application-volume:/asyncy'
                    image:config.services[service].image
                    name:'asyncy--{{service}}-1'
 
