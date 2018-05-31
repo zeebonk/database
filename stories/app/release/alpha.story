@@ -52,7 +52,7 @@ function NewRelease event:object ->
     event write '       Starting Application'
     foreach application.stories as story_name
         http method:'post'
-             endpoint:'/run/story'
+             endpoint:'http://{{engine}}/run/story'
              data:{'story_name': story_name}
 
     event write '       Success!'
