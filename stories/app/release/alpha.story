@@ -32,22 +32,49 @@ function NewRelease event:object ->
     event write '       Adding environment'
     file write data:config.environment path:'/config/environment.json'
 
-    event write '       Pulling containers'
+    event write '       Provisioning services'
     foreach application.services as service
-        unless config.services[service].image
-            config.services[service].image = ...
+        conf = config.services[service]
+        name = 'asyncy--{{service}}-1'
 
-        docker pull image:config.services[service].image
+        # shutdown
+        event write '       {{service}}... Shutting down '
+        if conf.lifecycle.shutdown
+            docker exec :name command:conf.lifecycle.shutdown.command
 
-    event write '       Starting services'
-    foreach application.services as service
-        # [TODO] attach necessary volumes (e.g., machinebox)
-        # [TODO] custom startup commands (e.g., machinebox)
-        docker run detach:1
-                   entrypoint:'tail -f /dev/null'
-                   volume:'application-volume:/asyncy'
-                   image:config.services[service].image
-                   name:'asyncy--{{service}}-1'
+        # stop and remove
+        docker stop :name
+        docker rm :name
+
+        # pull
+        event write '       {{service}}... Pulling new container'
+        docker pull image:(conf.image or 'latest')
+
+        # attach volumes
+        volumes = ['application-volume:/asyncy']
+        if conf.volumes
+            # loop through all the custom volumes
+            foreach conf.volumes as name, data
+                vol_name = 'asyncy--{{service}}-{{name}}'
+                # drop old volume
+                unless data.persist
+                    docker volume command:'rm' name:vol_name force:true
+
+                # create volume
+                docker volume command:'create' name:vol_name
+                # add to volume list
+                volumes append '{{name}}:{{data.target}}'
+
+        # setup entrypoint
+        entrypoint = (conf.lifecycle.startup.command or 'tail -f /dev/null')
+
+        event write '       {{service}}... Starting'
+        docker run :entrypoint
+                   :volumes
+                   environment:conf.environment
+                   image:(conf.image or 'latest')
+                   name:service_name
+                   detach:true
 
     event write '       Starting Application'
     foreach application.stories as story_name
