@@ -20,6 +20,7 @@ echo '
 
 # Parse Asyncy's backend Stories
 echo '===> Preparing Asyncy backend'
+mkdir /app
 storyscript parse --join ./stories > /app/stories.json
 
 # Start the primary Engine
