@@ -16,7 +16,7 @@ echo '
 
 
 # Install
-./scripts/install/postgres.sh
+#./scripts/install/postgres.sh
 
 # Parse Asyncy's backend Stories
 echo '===> Preparing Asyncy backend'
