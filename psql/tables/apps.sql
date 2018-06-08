@@ -17,3 +17,5 @@ CREATE TABLE app_dns(
 COMMENT on table app_dns is 'Apps may have many DNS endpoints that resolve to the application.';
 COMMENT on column app_dns.hostname is 'A full hostname entry such as foobar.asyncyapp.com, example.com or *.everything.com';
 COMMENT on column app_dns.is_validated is 'If dns resolves properly from registry.';
+
+CREATE INDEX app_dns_app_uuid_fk on app_dns (app_uuid);

@@ -7,14 +7,31 @@ CREATE TABLE services(
   pull_url                   url,
   topics                     citext[],
   is_certified               boolean not null default false,
-  links                      jsonb
+  links                      jsonb,
+  tsvector                   tsvector
 );
 COMMENT on column services.alias is 'The namespace reservation for the container';
 COMMENT on column services.pull_url is 'Address where the container can be pulled from.';
 COMMENT on column services.topics is 'GitHub repository topics for searching services.';
 COMMENT on column services.links is 'Custom links';
+COMMENT on column services.tsvector is E'@omit\nThis field will not be exposed to GraphQL, it''s for internal use only.';
 
 CREATE INDEX services_repo_uuid_fk on services (repo_uuid);
+CREATE INDEX services_tsvector_idx ON services USING GIN (tsvector);
+
+CREATE FUNCTION services__update_tsvector() RETURNS trigger AS $$
+BEGIN
+  if NEW.topics IS NULL THEN
+    NEW.tsvector = NULL;
+  ELSE
+    NEW.tsvector = to_tsvector('simple', array_to_string(NEW.topics, E'\n'));
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER _200_update_tsvector_insert BEFORE INSERT ON services FOR EACH ROW EXECUTE PROCEDURE services__update_tsvector();
+CREATE TRIGGER _200_update_tsvector_update BEFORE UPDATE ON services FOR EACH ROW WHEN (NEW.topics IS DISTINCT FROM OLD.topics) EXECUTE PROCEDURE services__update_tsvector();
 
 CREATE TYPE service_state as enum('DEVELOPMENT', 'PRERELEASE', 'BETA', 'STABLE', 'ARCHIVED');
 
