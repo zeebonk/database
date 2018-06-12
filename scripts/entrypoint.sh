@@ -15,12 +15,14 @@ echo '
 '
 
 
-# Install
-#./scripts/install/postgres.sh
+# check $POSTGRES only in Alpha, since its used in the Asyncy Hub
+if [ "$POSTGRES" = "yes" ]; then
+  ./scripts/install/postgres.sh
+fi
 
 # Parse Asyncy's backend Stories
 echo '===> Preparing Asyncy backend'
-storyscript parse --join ./stories > /app/stories.json
+storyscript parse -j ./stories > /app/stories.json
 
 # Start the primary Engine
 echo '===> Starting primary Engine'
