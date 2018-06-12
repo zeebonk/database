@@ -4,7 +4,7 @@ CREATE TABLE owners(
   service_id              citext not null,
   is_user                 boolean not null default true,
   username                username not null,
-  name                    title not null,
+  name                    citext,
   github_installation_id  int default null
 );
 COMMENT on column owners.service is 'GitHub or another provider';
