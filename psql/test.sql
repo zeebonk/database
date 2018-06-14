@@ -3,6 +3,7 @@ SELECT '';
 
 SELECT 'Search for "microservices":';
 SELECT * FROM search_services('microservices');
+SELECT '(should be a row above this)';
 -- Assert
 SELECT 1/count(*) FROM search_services('microservices');
 SELECT '';
@@ -10,6 +11,7 @@ SELECT '';
 
 SELECT 'Search for "microse":';
 SELECT * FROM search_services('microse');
+SELECT '(should be a row above this)';
 -- Assert
 SELECT 1/count(*) FROM search_services('microse');
 SELECT '';
@@ -17,9 +19,9 @@ SELECT '';
 
 SELECT 'Search for "database microse":';
 SELECT * FROM search_services('database microse');
+SELECT '(should be a row above this)';
 -- Assert
 SELECT 1/count(*) FROM search_services('database microse');
-SELECT '(should be a row above this)';
 SELECT '';
 SELECT '';
 
