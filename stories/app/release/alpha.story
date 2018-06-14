@@ -23,7 +23,8 @@ function NewRelease event:object ->
     file write data:application path:'/config/application.json'
 
 
-    if (file exists path:'/app/asyncy.yml')
+    yaml_exist = file exists path:'/app/asyncy.yml'
+    if yaml_exist
         event write '       Processing asyncy.yml'
         config = yaml path:'/app/asyncy.yml'
                       validate:'~/assets/schemas/config.json'
