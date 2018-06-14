@@ -77,11 +77,5 @@ function NewRelease event:object ->
                    name:service_name
                    detach:true
 
-    event write '       Starting Application'
-    foreach application.stories as story_name
-        http method:'post'
-             endpoint:'http://{{engine}}/run/story'
-             data:{'story_name': story_name}
-
     event write '       Success!'
     event write '-----> Visit http://asyncy.net'
