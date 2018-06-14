@@ -28,7 +28,7 @@ CREATE FUNCTION builds_next_id() returns trigger as $$
     new.id := v_next_value;
     return new;
   end;
-$$ language plpgsql security definer;
+$$ language plpgsql security definer SET search_path FROM CURRENT;
 
 CREATE TRIGGER _100_builds_next_id_insert before insert on builds
   for each row execute procedure builds_next_id();

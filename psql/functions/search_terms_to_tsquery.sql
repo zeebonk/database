@@ -19,7 +19,7 @@ BEGIN
   v_joined_with_ampersands = regexp_replace(v_sanitised_and_trimmed, '\s+', ' & ', 'g');
   RETURN to_tsquery(config, v_joined_with_ampersands || ':*');
 END;
-$$ LANGUAGE plpgsql IMMUTABLE;
+$$ LANGUAGE plpgsql IMMUTABLE SET search_path FROM CURRENT;
 
 
 COMMENT ON FUNCTION app_hidden.search_terms_to_tsquery(config regconfig, search_terms text) IS

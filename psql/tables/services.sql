@@ -28,7 +28,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SET search_path FROM CURRENT;
 
 CREATE TRIGGER _200_update_tsvector_insert BEFORE INSERT ON services FOR EACH ROW EXECUTE PROCEDURE services__update_tsvector();
 CREATE TRIGGER _200_update_tsvector_update BEFORE UPDATE ON services FOR EACH ROW WHEN (NEW.topics IS DISTINCT FROM OLD.topics) EXECUTE PROCEDURE services__update_tsvector();
