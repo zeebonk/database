@@ -20,4 +20,4 @@ begin
   end if;
  return new;
 end;
-$$ language plpgsql;
+$$ language plpgsql SET search_path FROM CURRENT;

@@ -12,4 +12,4 @@ CREATE FUNCTION search_services(search_terms text) RETURNS SETOF services AS $$
   ORDER BY
     ts_rank(services.tsvector, app_hidden.search_terms_to_tsquery('simple', search_terms)) DESC,
     services.uuid DESC;
-$$ LANGUAGE sql STABLE;
+$$ LANGUAGE sql STABLE SET search_path FROM CURRENT;
