@@ -20,13 +20,8 @@ if [ "$POSTGRES" = "yes" ]; then
   ./scripts/install/postgres.sh
 fi
 
-# Parse Asyncy's backend Stories
-echo '===> Preparing Asyncy backend'
-storyscript parse -j ./stories > /app/stories.json
-
-# Start the primary Engine
-echo '===> Starting primary Engine'
-# [TODO]
+echo '===> Adding Release Story'
+mv /deploy.json /asyncy/config/deploy.json
 
 # Run
 echo '===> Running Flask server'
