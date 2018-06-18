@@ -1,3 +1,6 @@
 envoy
 flask
 storyscript
+docker
+pyyaml
+requests
