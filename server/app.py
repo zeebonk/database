@@ -9,6 +9,7 @@ from flask import Flask, render_template, send_from_directory
 from flask import stream_with_context, request, Response
 
 app = Flask(__name__)
+internal_services = ['http-endpoint', 'http', 'log']
 
 
 @app.route('/')
@@ -46,7 +47,7 @@ def write(content, location):
         file.write(content)
 
 
-def getByAlias(alias, tag):
+def get_by_alias(alias, tag):
     query = f'''
     {
       query {
@@ -72,7 +73,7 @@ def getByAlias(alias, tag):
     )
 
 
-def getBySlug(iamge, tag):
+def get_by_slug(image, tag):
     owner, repo = image.split('/')
     query = f'''
     {
@@ -109,74 +110,80 @@ def getBySlug(iamge, tag):
     )
 
 
-@app.route('/alpha/deploy', method='POST')
+@app.route('/alpha/deploy', methods=['POST'])
 def deploy():
     def generate():
+        asset_dir = os.environ['ASSET_DIR']
         docker = Docker.from_env()
 
         # process stories
-        yield '-----> Preparing'
-        yield '       Compiling Stories'
-        application = App.compile('/asyncy/app')
-        write(application, '/asyncy/config/stories.json')
+        yield '-----> Preparing\n'
+        yield '       Compiling Stories\n'
+        application = App.compile(f'{asset_dir}/app')
+        write(application, f'{asset_dir}/config/stories.json')
+
+        application = json.loads(application)
 
         # produce configuration from asyncy.yml
         config = {}
-        if os.path.exists('/asyncy/app/asyncy.yml'):
-            yield '       Processing asyncy.yml'
-            with open('/asyncy/app/asyncy.yml', 'r') as file:
+        if os.path.exists(f'{asset_dir}/app/asyncy.yml'):
+            yield '       Processing asyncy.yml\n'
+            with open(f'{asset_dir}/app/asyncy.yml', 'r') as file:
                 config = yaml.load(file)
             # [TODO] validate /assets/schemas/config.json
-            write(config, '/asyncy/config/asyncy.json')
+            write(config, f'{asset_dir}/config/asyncy.json')
 
-            yield '       Adding environment'
+            yield '       Adding environment\n'
             write(config.get('environment', {}),
-                  '/asyncy/config/environment.json')
+                  f'{asset_dir}/config/environment.json')
 
         # loop through containers
-        yield '       Provisioning services'
+        yield '       Provisioning services\n'
         for service in application['services']:
+            if service in internal_services:
+                yield f'       {service} is internal\n'
+                continue
             conf = config['services'][service]
-            name = f'asyncy--{{service}}-1'
+            name = f'asyncy--{service}-1'
 
             image = conf.get('image')
             tag = conf.get('tag', 'latest')
 
             if image:
-                image, omg = getBySlug(image, tag)
+                image, omg = get_by_slug(image, tag)
             else:
-                image, omg = getByAlias(service, tag)
+                image, omg = get_by_alias(service, tag)
 
             # Shutdown old container
             container = docker.containers.get(name)
             if container:
-                yield f'       {{service}}... Shutting down'
+                yield f'       {service}... Shutting down\n'
                 if omg.get('lifecycle', {}).get('shutdown'):
                     container.exec_run(omg['lifecycle']['shutdown']['command'])
                 container.stop()
                 container.rm()
 
             # Pull new container
-            yield f'       {{service}}... Pulling new container'
+            yield f'       {service}... Pulling new container\n'
             docker.images.pull(image)
 
             # create volume list
             volumes = ['application-volume:/asyncy']
             if omg.get('volumes'):
                 for name, data in omg['volumes'].items():
-                    vol_name = f'asyncy--{{service}}-{{name}}'
+                    vol_name = f'asyncy--{service}-{name}'
                     if not data.get('persist'):
                         docker.volumes.get(vol_name).remove(True)
                     docker.volumes.create(vol_name)
                     volumes.append(r'{{name}}:{{data["target"]}}')
 
             # define entrypoint
-            entrypoint = omg.get('lifecycle', {})
-                             .get('startup', {})
-                             .get('command', 'tail -f /dev/null')
+            entrypoint = omg.get('lifecycle', {}) \
+                .get('startup', {}) \
+                .get('command', 'tail -f /dev/null')
 
             # Run the contanier
-            yield f'       {{service}}... Starting'
+            yield f'       {service}... Starting\n'
             docker.containers.run(
                 image,
                 entrypoint=entrypoint,
@@ -186,8 +193,8 @@ def deploy():
                 detach=True
             )
 
-        yield '       Success!'
-        yield '-----> Visit http://asyncy.net'
+        yield '       Success!\n'
+        yield '-----> Visit http://asyncy.net\n'
 
     return Response(stream_with_context(generate()))
 
