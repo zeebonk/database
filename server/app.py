@@ -48,64 +48,47 @@ def write(content, location):
 
 
 def get_by_alias(alias, tag):
-    query = f'''
-    {
-      query {
-        serviceByAlias(alias: "{{alias}}"){
-          pull_url
-          serviceTags(condition: {tag: "{{tag}}"} first:1){
-            nodes{
-              configuration
-            }
-          }
-        }
-      }
-    }
-    '''
+    query = open('/assets/release/get_by_alias.gql', 'r').read()
     res = requests.post(
         'http://api.asyncy.com/graphql',
-        data={'query': query}
-    ).json()['data']['query']['serviceByAlias']
+        data={
+            'query': query,
+            'variablers': {
+                'alias': alias,
+                'tag': tag
+            }
+        }
+    )
+    res.raise_for_status()
+
+    res = res.json()['data']['serviceByAlias']
 
     return (
-        f'{{res["pull_url"]}}:{{tag}}',
+        res['pull_url'],
         res['serviceTags']['nodes'][0]['configuration']
     )
 
 
 def get_by_slug(image, tag):
     owner, repo = image.split('/')
-    query = f'''
-    {
-      query {
-        allOwners(condition: {name: "{{owner}}"}, first: 1){
-          nodes{
-            repos(condition: {name: "{{repo}}"}, first:1){
-              nodes{
-                services(first:1){
-                  nodes{
-                    pullUrl
-                    serviceTags(condition: {tag: "{{tag}}"} first:1){
-                      nodes{
-                        configuration
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    '''
+    query = open('/assets/release/get_by_slug.gql', 'r').read()
     res = requests.post(
         'http://api.asyncy.com/graphql',
-        data={'query': query}
-    ).json()['data']['query']['allOwners'][0]['repos'][0]['services'][0]
+        data={
+            'query': query,
+            'variables': {
+                'owner': owner,
+                'repo': repo,
+                'tag': tag
+            }
+        }
+    )
+    res.raise_for_status()
+
+    res = res.json()['data']['allOwners'][0]['repos'][0]['services'][0]
 
     return (
-        f'{{res["pull_url"]}}:{{tag}}',
+        res['pull_url'],
         res['serviceTags']['nodes'][0]['configuration']
     )
 
@@ -146,13 +129,13 @@ def deploy():
             conf = config['services'][service]
             name = f'asyncy--{service}-1'
 
-            image = conf.get('image')
+            # query the Hub for the OMG
             tag = conf.get('tag', 'latest')
-
-            if image:
-                image, omg = get_by_slug(image, tag)
+            if conf.get('image'):
+                pull_url, omg = get_by_slug(conf['image'], tag)
             else:
-                image, omg = get_by_alias(service, tag)
+                pull_url, omg = get_by_alias(service, tag)
+            image = f'{pull_url}:{tag}'
 
             # Shutdown old container
             container = docker.containers.get(name)

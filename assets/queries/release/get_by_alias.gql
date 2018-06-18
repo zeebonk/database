@@ -1,0 +1,10 @@
+{
+  serviceByAlias(alias: $alias){
+    pull_url
+    serviceTags(condition: {tag: $tag} first:1){
+      nodes{
+        configuration
+      }
+    }
+  }
+}
