@@ -1,5 +1,6 @@
 import os
 import envoy
+from storyscript.app import App
 import yaml
 import json
 import requests
@@ -116,7 +117,7 @@ def deploy():
         # process stories
         yield '-----> Preparing'
         yield '       Compiling Stories'
-        application = storyscript.parse('/asyncy/app')
+        application = App.compile('/asyncy/app')
         write(application, '/asyncy/config/stories.json')
 
         # produce configuration from asyncy.yml
