@@ -126,7 +126,7 @@ def deploy():
             if service in internal_services:
                 yield f'       {service} is internal\n'
                 continue
-            conf = config['services'][service]
+            conf = config.get('services', {}).get(service, {})
             name = f'asyncy--{service}-1'
 
             # query the Hub for the OMG
