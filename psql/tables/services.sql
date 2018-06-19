@@ -4,7 +4,7 @@ CREATE TABLE services(
   title                      title,
   description                text,
   alias                      alias unique,
-  pull_url                   url,
+  pull_url                   text,
   topics                     citext[],
   is_certified               boolean not null default false,
   links                      jsonb,
