@@ -181,7 +181,7 @@ def deploy():
                 detach=True
             )
 
-        yield '-----> Restarting Engine'
+        yield '-----> Restarting Engine\n'
         docker.containers.get('stack-compose_engine_1').restart()
 
         yield '       Success!\n'
