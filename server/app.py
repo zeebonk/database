@@ -139,7 +139,7 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                     if not data.get('persist'):
                         docker.volumes.get(vol_name).remove(True)
                     docker.volumes.create(vol_name)
-                    volumes.append(r'{{name}}:{{data["target"]}}')
+                    volumes.append(f'{name}:{data["target"]}')
 
             # define entrypoint
             entrypoint = omg.get('lifecycle', {}) \
