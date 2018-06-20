@@ -102,6 +102,7 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                   f'{asset_dir}/config/environment.json')
 
         # loop through containers
+        services = {}
         self.fwrite('       Provisioning services')
         for service in application['services']:
             if service in internal_services:
@@ -116,6 +117,7 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                 pull_url, omg = get_by_slug(conf['image'], tag)
             else:
                 pull_url, omg = get_by_alias(service, tag)
+            services[service] = omg
             image = f'{pull_url}:{tag}'
 
             # Shutdown old container
@@ -156,6 +158,9 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                 name=service_name,
                 detach=True
             )
+
+        # write services file
+        write(services, f'{asset_dir}/config/services.json')
 
         self.fwrite('-----> Restarting Engine')
         docker.containers.get('stack-compose_engine_1').restart()
