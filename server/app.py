@@ -11,11 +11,7 @@ from flask import stream_with_context, request, Response
 
 app = Flask(__name__)
 internal_services = ['http-endpoint', 'http', 'log']
-sentry = Sentry(
-    app,
-    dsn=os.getenv('SENTRY_DSN'),
-    release='v0.0.1'
-)
+sentry = Sentry(app, dsn=os.getenv('SENTRY_DSN'))
 
 
 @app.route('/')
