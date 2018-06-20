@@ -1,43 +1,16 @@
 import os
-import envoy
 from storyscript.app import App
 import yaml
 import json
 import requests
 import docker as Docker
-from raven.contrib.flask import Sentry
-from flask import Flask, render_template, send_from_directory
-from flask import stream_with_context, request, Response
+import tornado.ioloop
+import tornado.web
+from tornado import gen
+from raven.contrib.tornado import AsyncSentryClient
+from raven.contrib.tornado import SentryMixin
 
-app = Flask(__name__)
 internal_services = ['http-endpoint', 'http', 'log', 'crontab']
-sentry = Sentry(app, dsn=os.getenv('SENTRY_DSN'))
-sentry.extra_context({'environment': os.getenv('ENVIRONMENT')})
-if os.getenv('ENVIRONMENT') == 'alpha':
-    sentry.user_context({'id': os.getenv('USER_ID')})
-
-
-@app.route('/')
-def index():
-    return render_template(
-        'index.html',
-        dns=os.getenv('DNS')
-    )
-
-
-@app.route('/assets/<path>')
-def assets(path):
-    return send_from_directory('assets', path)
-
-
-@app.route('/healthcheck')
-def healthcheck():
-    res = envoy.run('../scripts/healthcheck.sh')
-    return render_template(
-        'healthcheck.html',
-        dns=os.getenv('DNS'),
-        res=res
-    )
 
 
 def write(content, location):
@@ -98,15 +71,18 @@ def get_by_slug(image, tag):
     )
 
 
-@app.route('/alpha/deploy', methods=['POST'])
-def deploy():
-    def generate():
+class DeployHandler(SentryMixin, tornado.web.RequestHandler):
+    def fwrite(self, data):
+        self.write(data)
+        self.flush()
+
+    def post(self):
         asset_dir = os.environ['ASSET_DIR']
         docker = Docker.from_env()
 
         # process stories
-        yield '-----> Preparing\n'
-        yield '       Compiling Stories\n'
+        self.fwrite('-----> Preparing')
+        self.fwrite('       Compiling Stories')
         application = App.compile(f'{asset_dir}/app')
         write(application, f'{asset_dir}/config/stories.json')
 
@@ -115,21 +91,21 @@ def deploy():
         # produce configuration from asyncy.yml
         config = {}
         if os.path.exists(f'{asset_dir}/app/asyncy.yml'):
-            yield '       Processing asyncy.yml\n'
+            self.fwrite('       Processing asyncy.yml')
             with open(f'{asset_dir}/app/asyncy.yml', 'r') as file:
                 config = yaml.load(file)
             # [TODO] validate /assets/schemas/config.json
             write(config, f'{asset_dir}/config/asyncy.json')
 
-            yield '       Adding environment\n'
+            self.fwrite('       Adding environment')
             write(config.get('environment', {}),
                   f'{asset_dir}/config/environment.json')
 
         # loop through containers
-        yield '       Provisioning services\n'
+        self.fwrite('       Provisioning services')
         for service in application['services']:
             if service in internal_services:
-                yield f'       {service} is internal\n'
+                self.fwrite(f'       {service} is internal')
                 continue
             conf = config.get('services', {}).get(service, {})
             name = f'asyncy--{service}-1'
@@ -145,14 +121,14 @@ def deploy():
             # Shutdown old container
             container = docker.containers.get(name)
             if container:
-                yield f'       {service}... Shutting down\n'
+                self.fwrite(f'       {service}... Shutting down')
                 if omg.get('lifecycle', {}).get('shutdown'):
                     container.exec_run(omg['lifecycle']['shutdown']['command'])
                 container.stop()
                 container.rm()
 
             # Pull new container
-            yield f'       {service}... Pulling new container\n'
+            self.fwrite(f'       {service}... Pulling new container')
             docker.images.pull(image)
 
             # create volume list
@@ -171,7 +147,7 @@ def deploy():
                 .get('command', 'tail -f /dev/null')
 
             # Run the contanier
-            yield f'       {service}... Starting\n'
+            self.fwrite(f'       {service}... Starting')
             docker.containers.run(
                 image,
                 entrypoint=entrypoint,
@@ -181,14 +157,26 @@ def deploy():
                 detach=True
             )
 
-        yield '-----> Restarting Engine\n'
+        self.fwrite('-----> Restarting Engine')
         docker.containers.get('stack-compose_engine_1').restart()
 
-        yield '       Success!\n'
-        yield '-----> Visit http://asyncy.net\n'
+        self.write('       Success!\n')
+        self.write('-----> Visit http://asyncy.net\n')
+        self.finish()
 
-    return Response(stream_with_context(generate()))
+
+def make_app():
+    return tornado.web.Application([
+        (r'/alpha/deploy', DeployHandler),
+    ])
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+if __name__ == "__main__":
+    app = make_app()
+    app.listen(5000)
+
+    app.sentry_client = AsyncSentryClient(dsn=os.getenv('SENTRY_DSN'))
+    app.sentry_client.extra_context({'environment': os.getenv('ENVIRONMENT')})
+    app.sentry_client.user_context({'id': os.getenv('ASYNCY_USER_ID')})
+
+    tornado.ioloop.IOLoop.current().start()

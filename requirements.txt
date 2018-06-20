@@ -1,7 +1,6 @@
-envoy
-flask
+tornado
 storyscript
 docker
 pyyaml
 requests
-raven[flask]
+raven

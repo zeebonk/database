@@ -21,5 +21,5 @@ if [ "$POSTGRES" = "yes" ]; then
 fi
 
 # Run
-echo '===> Running Flask server'
+echo '===> Running Server'
 python ./server/app.py
