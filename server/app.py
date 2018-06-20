@@ -54,7 +54,7 @@ def write(content, location):
 
 
 def get_by_alias(alias, tag):
-    query = open('/assets/release/get_by_alias.gql', 'r').read()
+    query = open('/assets/queries/release/get_by_alias.gql', 'r').read()
     res = requests.post(
         'http://api.asyncy.com/graphql',
         data={
@@ -77,7 +77,7 @@ def get_by_alias(alias, tag):
 
 def get_by_slug(image, tag):
     owner, repo = image.split('/')
-    query = open('/assets/release/get_by_slug.gql', 'r').read()
+    query = open('/assets/queries/release/get_by_slug.gql', 'r').read()
     res = requests.post(
         'http://api.asyncy.com/graphql',
         data={
