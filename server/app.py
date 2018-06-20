@@ -10,7 +10,7 @@ from flask import Flask, render_template, send_from_directory
 from flask import stream_with_context, request, Response
 
 app = Flask(__name__)
-internal_services = ['http-endpoint', 'http', 'log']
+internal_services = ['http-endpoint', 'http', 'log', 'crontab']
 sentry = Sentry(app, dsn=os.getenv('SENTRY_DSN'))
 
 
