@@ -4,3 +4,4 @@ storyscript
 docker
 pyyaml
 requests
+raven[flask]
