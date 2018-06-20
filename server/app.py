@@ -12,6 +12,9 @@ from flask import stream_with_context, request, Response
 app = Flask(__name__)
 internal_services = ['http-endpoint', 'http', 'log', 'crontab']
 sentry = Sentry(app, dsn=os.getenv('SENTRY_DSN'))
+sentry.extra_context({'environment': os.getenv('ENVIRONMENT')})
+if os.getenv('ENVIRONMENT') == 'alpha':
+    sentry.user_context({'id': os.getenv('USER_ID')})
 
 
 @app.route('/')
