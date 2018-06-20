@@ -182,6 +182,9 @@ def deploy():
                 detach=True
             )
 
+        yield '-----> Restarting Engine'
+        docker.containers.get('stack-compose_engine_1').restart()
+
         yield '       Success!\n'
         yield '-----> Visit http://asyncy.net\n'
 
