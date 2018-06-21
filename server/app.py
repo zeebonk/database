@@ -163,7 +163,7 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
         write(services, f'{asset_dir}/config/services.json')
 
         self.fwrite('-----> Restarting Engine')
-        docker.containers.get('stack-compose_engine_1').restart()
+        docker.containers.list(filters={'name': 'engine_1'})[0].restart()
 
         self.write('       Success!\n')
         self.write('-----> Visit http://asyncy.net\n')
