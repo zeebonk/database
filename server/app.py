@@ -29,6 +29,7 @@ def get_by_alias(alias, tag):
     query = open('/assets/queries/release/get_by_alias.gql', 'r').read()
     res = requests.post(
         'https://api.asyncy.com/graphql',
+        headers={'Content-Type': 'application/json'},
         data={
             'query': query,
             'variables': {
@@ -52,6 +53,7 @@ def get_by_slug(image, tag):
     query = open('/assets/queries/release/get_by_slug.gql', 'r').read()
     res = requests.post(
         'https://api.asyncy.com/graphql',
+        headers={'Content-Type': 'application/json'},
         data={
             'query': query,
             'variables': {
