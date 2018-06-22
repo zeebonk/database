@@ -31,7 +31,7 @@ def get_by_alias(alias, tag):
         'https://api.asyncy.com/graphql',
         data={
             'query': query,
-            'variablers': {
+            'variables': {
                 'alias': alias,
                 'tag': tag
             }

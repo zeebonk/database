@@ -1,4 +1,4 @@
-{
+query GetAlias($alias: Alias! $tag: String!){
   serviceByAlias(alias: $alias){
     pullUrl
     serviceTags(condition: {tag: $tag} first:1){

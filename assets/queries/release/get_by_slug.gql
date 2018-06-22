@@ -1,4 +1,4 @@
-{
+query GetAlias($owner: Username! $repo: Username! $tag: String!){
   allOwners(condition: {username: $owner}, first: 1){
     nodes{
       repos(condition: {name: $repo}, first: 1){
