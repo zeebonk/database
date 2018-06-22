@@ -79,97 +79,105 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
         self.flush()
 
     def post(self):
-        asset_dir = os.environ['ASSET_DIR']
-        docker = Docker.from_env()
+        try:
+            asset_dir = os.environ['ASSET_DIR']
+            docker = Docker.from_env()
 
-        # process stories
-        self.fwrite('-----> Preparing')
-        self.fwrite('       Compiling Stories')
-        application = App.compile(f'{asset_dir}/app')
-        write(application, f'{asset_dir}/config/stories.json')
+            # process stories
+            self.fwrite('-----> Preparing')
+            self.fwrite('       Compiling Stories')
+            application = App.compile(f'{asset_dir}/app')
+            write(application, f'{asset_dir}/config/stories.json')
 
-        application = json.loads(application)
+            application = json.loads(application)
 
-        # produce configuration from asyncy.yml
-        config = {}
-        if os.path.exists(f'{asset_dir}/app/asyncy.yml'):
-            self.fwrite('       Processing asyncy.yml')
-            with open(f'{asset_dir}/app/asyncy.yml', 'r') as file:
-                config = yaml.load(file)
-            # [TODO] validate /assets/schemas/config.json
-            write(config, f'{asset_dir}/config/asyncy.json')
+            # produce configuration from asyncy.yml
+            config = {}
+            if os.path.exists(f'{asset_dir}/app/asyncy.yml'):
+                self.fwrite('       Processing asyncy.yml')
+                with open(f'{asset_dir}/app/asyncy.yml', 'r') as file:
+                    config = yaml.load(file)
+                # [TODO] validate /assets/schemas/config.json
+                write(config, f'{asset_dir}/config/asyncy.json')
 
-            self.fwrite('       Adding environment')
-            write(config.get('environment', {}),
-                  f'{asset_dir}/config/environment.json')
+                self.fwrite('       Adding environment')
+                write(config.get('environment', {}),
+                      f'{asset_dir}/config/environment.json')
 
-        # loop through containers
-        services = {}
-        self.fwrite('       Provisioning services')
-        for service in application['services']:
-            if service in internal_services:
-                self.fwrite(f'       {service} is internal')
-                continue
-            conf = config.get('services', {}).get(service, {})
-            name = f'asyncy--{service}-1'
+            # loop through containers
+            services = {}
+            self.fwrite('       Provisioning services')
+            for service in application['services']:
+                if service in internal_services:
+                    self.fwrite(f'       {service} is internal')
+                    continue
+                conf = config.get('services', {}).get(service, {})
+                name = f'asyncy--{service}-1'
 
-            # query the Hub for the OMG
-            tag = conf.get('tag', 'latest')
-            if conf.get('image'):
-                pull_url, omg = get_by_slug(conf['image'], tag)
-            else:
-                pull_url, omg = get_by_alias(service, tag)
-            services[service] = omg
-            image = f'{pull_url}:{tag}'
+                # query the Hub for the OMG
+                tag = conf.get('tag', 'latest')
+                if conf.get('image'):
+                    pull_url, omg = get_by_slug(conf['image'], tag)
+                else:
+                    pull_url, omg = get_by_alias(service, tag)
+                services[service] = omg
+                image = f'{pull_url}:{tag}'
 
-            # Shutdown old container
-            container = docker.containers.get(name)
-            if container:
-                self.fwrite(f'       {service}... Shutting down')
-                if omg.get('lifecycle', {}).get('shutdown'):
-                    container.exec_run(omg['lifecycle']['shutdown']['command'])
-                container.stop()
-                container.rm()
+                # Shutdown old container
+                container = docker.containers.get(name)
+                if container:
+                    self.fwrite(f'       {service}... Shutting down')
+                    if omg.get('lifecycle', {}).get('shutdown'):
+                        container.exec_run(omg['lifecycle']['shutdown']['command'])
+                    container.stop()
+                    container.rm()
 
-            # Pull new container
-            self.fwrite(f'       {service}... Pulling new container')
-            docker.images.pull(image)
+                # Pull new container
+                self.fwrite(f'       {service}... Pulling new container')
+                docker.images.pull(image)
 
-            # create volume list
-            volumes = ['application-volume:/asyncy']
-            if omg.get('volumes'):
-                for name, data in omg['volumes'].items():
-                    vol_name = f'asyncy--{service}-{name}'
-                    if not data.get('persist'):
-                        docker.volumes.get(vol_name).remove(True)
-                    docker.volumes.create(vol_name)
-                    volumes.append(f'{name}:{data["target"]}')
+                # create volume list
+                volumes = ['application-volume:/asyncy']
+                if omg.get('volumes'):
+                    for name, data in omg['volumes'].items():
+                        vol_name = f'asyncy--{service}-{name}'
+                        if not data.get('persist'):
+                            docker.volumes.get(vol_name).remove(True)
+                        docker.volumes.create(vol_name)
+                        volumes.append(f'{name}:{data["target"]}')
 
-            # define entrypoint
-            entrypoint = omg.get('lifecycle', {}) \
-                .get('startup', {}) \
-                .get('command', 'tail -f /dev/null')
+                # define entrypoint
+                entrypoint = omg.get('lifecycle', {}) \
+                    .get('startup', {}) \
+                    .get('command', 'tail -f /dev/null')
 
-            # Run the contanier
-            self.fwrite(f'       {service}... Starting')
-            docker.containers.run(
-                image,
-                entrypoint=entrypoint,
-                volumes=volumes,
-                environment=conf.environment,
-                name=service_name,
-                detach=True
-            )
+                # Run the contanier
+                self.fwrite(f'       {service}... Starting')
+                docker.containers.run(
+                    image,
+                    entrypoint=entrypoint,
+                    volumes=volumes,
+                    environment=conf.environment,
+                    name=service_name,
+                    detach=True
+                )
 
-        # write services file
-        write(services, f'{asset_dir}/config/services.json')
+            # write services file
+            write(services, f'{asset_dir}/config/services.json')
 
-        self.fwrite('-----> Restarting Engine')
-        docker.containers.list(filters={'name': 'engine_1'})[0].restart()
+            self.fwrite('-----> Restarting Engine')
+            docker.containers.list(filters={'name': 'engine_1'})[0].restart()
 
-        self.write('       Success!\n')
-        self.write('-----> Visit http://asyncy.net\n')
-        self.finish()
+            self.write('       Success!\n')
+            self.write('-----> Visit http://asyncy.net\n')
+
+        except Exception as error:
+            self.captureException()
+            self.write('**ERROR**\n')
+            self.write(str(error))
+
+        finally:
+            self.finish()
 
 
 def make_app():
