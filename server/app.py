@@ -171,13 +171,12 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
 
             self.write('       Success!\n')
             self.write('-----> Visit http://asyncy.net\n')
+            self.finish()
 
         except Exception as error:
             self.fwrite(f'**ERROR**\n{error}')
-            self.captureException()
-
-        finally:
             self.finish()
+            raise
 
 
 def make_app():
