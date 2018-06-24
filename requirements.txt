@@ -1,5 +1,5 @@
 tornado
--f pip install git+https://github.com/asyncy/storyscript.git@master#egg=storyscript
+-e git+https://github.com/asyncy/storyscript.git@master#egg=storyscript
 docker
 pyyaml
 requests
