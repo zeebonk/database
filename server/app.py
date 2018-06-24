@@ -30,13 +30,13 @@ def get_by_alias(alias, tag):
     res = requests.post(
         'https://api.asyncy.com/graphql',
         headers={'Content-Type': 'application/json'},
-        data={
+        data=json.dumps({
             'query': query,
             'variables': {
                 'alias': alias,
                 'tag': tag
             }
-        }
+        })
     )
     res.raise_for_status()
 
@@ -54,14 +54,14 @@ def get_by_slug(image, tag):
     res = requests.post(
         'https://api.asyncy.com/graphql',
         headers={'Content-Type': 'application/json'},
-        data={
+        data=json.dumps({
             'query': query,
             'variables': {
                 'owner': owner,
                 'repo': repo,
                 'tag': tag
             }
-        }
+        })
     )
     res.raise_for_status()
 
