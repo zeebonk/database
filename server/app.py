@@ -84,7 +84,7 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
             docker = Docker.from_env()
 
             # process stories
-            self.fwrite('-----> Preparing')
+            self.write('-----> Preparing')
             self.fwrite('       Compiling Stories')
             application = App.compile(f'{asset_dir}/app')
             application = json.loads(application)
@@ -95,22 +95,22 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
             # produce configuration from asyncy.yml
             config = {}
             if os.path.exists(f'{asset_dir}/app/asyncy.yml'):
-                self.fwrite('       Processing asyncy.yml')
+                self.write('       Processing asyncy.yml')
                 with open(f'{asset_dir}/app/asyncy.yml', 'r') as file:
                     config = yaml.load(file)
                 # [TODO] validate /assets/schemas/config.json
                 write(config, f'{asset_dir}/config/asyncy.json')
 
-                self.fwrite('       Adding environment')
+                self.write('       Adding environment')
                 write(config.get('environment', {}),
                       f'{asset_dir}/config/environment.json')
 
             # loop through containers
             services = {}
-            self.fwrite('       Provisioning services')
+            self.fwrite('-----> Provisioning services')
             for service in application['services']:
                 if service in internal_services:
-                    self.fwrite(f'       {service} is internal')
+                    self.write(f'       {service} is internal')
                     continue
                 conf = config.get('services', {}).get(service, {})
                 name = f'asyncy--{service}-1'
@@ -173,9 +173,8 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
             self.write('-----> Visit http://asyncy.net\n')
 
         except Exception as error:
+            self.fwrite(f'**ERROR**\n{error}')
             self.captureException()
-            self.write('**ERROR**\n')
-            self.write(str(error))
 
         finally:
             self.finish()
