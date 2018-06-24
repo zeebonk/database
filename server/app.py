@@ -191,7 +191,8 @@ if __name__ == "__main__":
     app.listen(5000)
 
     app.sentry_client = AsyncSentryClient(dsn=os.getenv('SENTRY_DSN'))
-    app.sentry_client.extra_context({'environment': os.getenv('ENVIRONMENT')})
+    app.sentry_client.extra_context({'environment': os.getenv('ENVIRONMENT'),
+                                     'release': '0.0.1'})
     app.sentry_client.user_context({'id': os.getenv('ASYNCY_USER_ID')})
 
     tornado.ioloop.IOLoop.current().start()
