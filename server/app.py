@@ -150,12 +150,12 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                     # create volume list
                     volumes = ['application-volume:/asyncy']
                     if omg.get('volumes'):
-                        for name, data in omg['volumes'].items():
-                            vol_name = f'asyncy--{service}-{name}'
+                        for _name, data in omg['volumes'].items():
+                            vol_name = f'asyncy--{service}-{_name}'
                             if not data.get('persist'):
                                 docker.volumes.get(vol_name).remove(True)
                             docker.volumes.create(vol_name)
-                            volumes.append(f'{name}:{data["target"]}')
+                            volumes.append(f'{_name}:{data["target"]}')
 
                     # define entrypoint
                     entrypoint = omg.get('lifecycle', {}) \
@@ -169,7 +169,7 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                         entrypoint=entrypoint,
                         volumes=volumes,
                         environment=environment.get(service),
-                        name=service_name,
+                        name=name,
                         detach=True
                     )
 
