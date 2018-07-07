@@ -129,8 +129,12 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                     image = f'{pull_url}:{tag}'
 
                     # Shutdown old container
-                    container = docker.containers.get(name)
-                    if container:
+                    try:
+                        container = docker.containers.get(name)
+                    except:
+                        # container is not yet created
+                        pass
+                    else:
                         self.fwrite(f'       {service}... Shutting down')
                         if omg.get('lifecycle', {}).get('shutdown'):
                             container.exec_run(omg['lifecycle']['shutdown']['command'])
