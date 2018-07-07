@@ -1,5 +1,5 @@
 tornado
--e git+https://github.com/asyncy/storyscript.git@master#egg=storyscript
+storyscript
 docker
 pyyaml
 requests

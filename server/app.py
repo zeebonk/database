@@ -96,6 +96,7 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
 
             # produce configuration from asyncy.yml
             config = {}
+            environment = {}
             if os.path.exists(f'{asset_dir}/app/asyncy.yml'):
                 self.write('       Processing asyncy.yml\n')
                 with open(f'{asset_dir}/app/asyncy.yml', 'r') as file:
@@ -104,7 +105,8 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                 write(config, f'{asset_dir}/config/asyncy.json')
 
                 self.write('       Adding environment\n')
-                write(config.get('environment', {}),
+                environment = config.get('environment', {})
+                write(environment,
                       f'{asset_dir}/config/environment.json')
 
             # loop through containers
@@ -166,7 +168,7 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                         image,
                         entrypoint=entrypoint,
                         volumes=volumes,
-                        environment=conf.environment,
+                        environment=environment.get(service),
                         name=service_name,
                         detach=True
                     )
