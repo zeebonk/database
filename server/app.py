@@ -44,7 +44,7 @@ def get_by_alias(alias, tag):
     assert res, 'Not found in Asyncy Hub'
 
     return (
-        res['pull_url'],
+        res['pullUrl'],
         res['serviceTags']['nodes'][0]['configuration']
     )
 
@@ -70,7 +70,7 @@ def get_by_slug(image, tag):
     assert res, 'Not found in Asyncy Hub'
 
     return (
-        res['pull_url'],
+        res['pullUrl'],
         res['serviceTags']['nodes'][0]['configuration']
     )
 
