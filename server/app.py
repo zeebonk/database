@@ -104,10 +104,11 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                 # [TODO] validate /assets/schemas/config.json
                 write(config, f'{asset_dir}/config/asyncy.json')
 
-                self.write('       Adding environment\n')
-                environment = config.get('environment', {})
-                write(environment,
-                      f'{asset_dir}/config/environment.json')
+                # [NOTE] Intentionally removed, see https://github.com/asyncy/cli/issues/16
+                # self.write('       Adding environment\n')
+                # environment = config.get('environment', {})
+                # write(environment,
+                #       f'{asset_dir}/config/environment.json')
 
             # loop through containers
             services = {}
