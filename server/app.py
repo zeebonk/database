@@ -91,7 +91,7 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
             application = App.compile(f'{asset_dir}/app')
             application = json.loads(application)
 
-            write(json.dumps(application['stories']),
+            write(json.dumps(application),
                   f'{asset_dir}/config/stories.json')
 
             # produce configuration from asyncy.yml
