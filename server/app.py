@@ -128,7 +128,11 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                         pull_url, omg = get_by_slug(conf['image'], tag)
                     else:
                         pull_url, omg = get_by_alias(service, tag)
-                    services[service] = omg
+                    services[service] = {
+                        'tag': tag,
+                        'environment': {},
+                        'configuration': omg
+                    }
                     image = f'{pull_url}:{tag}'
 
                     # Shutdown old container
