@@ -142,7 +142,7 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                         if omg.get('lifecycle', {}).get('shutdown'):
                             container.exec_run(omg['lifecycle']['shutdown']['command'])
                         container.stop()
-                        container.rm()
+                        container.remove()
 
                     # Pull new container
                     self.fwrite(f'       {service}... Pulling new container')
