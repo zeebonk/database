@@ -173,6 +173,7 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                         image,
                         entrypoint=entrypoint,
                         volumes=volumes,
+                        network=self.get_network_stack(),
                         environment=environment.get(service),
                         name=name,
                         detach=True
@@ -195,6 +196,16 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
             self.fwrite(f'**ERROR**\n{error}')
             self.finish()
             raise
+
+    @staticmethod
+    def get_network_stack():
+        docker = Docker.from_env()
+        networks = docker.networks.list(filters={'name': 'asyncy-backend'})
+        if len(networks) > 1:
+            raise Exception('There are more than one '
+                            'networks for asyncy-backend. Please terminate '
+                            'the other running stacks.')
+        return networks[0].name
 
 
 def make_app():
