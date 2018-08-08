@@ -97,6 +97,12 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
             # produce configuration from asyncy.yml
             config = {}
             environment = {}
+
+            if os.path.exists(f'{asset_dir}/config/environment.json'):
+                environment = json.loads(
+                    open(f'{asset_dir}/config/environment.json', 'r').read()
+                )
+
             if os.path.exists(f'{asset_dir}/app/asyncy.yml'):
                 self.write('       Processing asyncy.yml\n')
                 with open(f'{asset_dir}/app/asyncy.yml', 'r') as file:
@@ -130,7 +136,6 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                         pull_url, omg = get_by_alias(service, tag)
                     services[service] = {
                         'tag': tag,
-                        'environment': {},
                         'configuration': omg
                     }
                     image = f'{pull_url}:{tag}'
