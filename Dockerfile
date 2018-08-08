@@ -1,8 +1,8 @@
 FROM        jfloff/alpine-python
 
+RUN         apk update
+RUN         apk add postgresql-client jq curl curl-dev
 ADD         . .
-RUN         apk update && \
-            apk add postgresql-client jq curl curl-dev && \
-            pip install -r requirements.txt
+RUN         pip install -r requirements.txt
 
 ENTRYPOINT  ["./scripts/entrypoint.sh"]
