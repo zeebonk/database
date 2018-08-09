@@ -97,6 +97,12 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
             # produce configuration from asyncy.yml
             config = {}
             environment = {}
+
+            if os.path.exists(f'{asset_dir}/config/environment.json'):
+                environment = json.loads(
+                    open(f'{asset_dir}/config/environment.json', 'r').read()
+                )
+
             if os.path.exists(f'{asset_dir}/app/asyncy.yml'):
                 self.write('       Processing asyncy.yml\n')
                 with open(f'{asset_dir}/app/asyncy.yml', 'r') as file:
@@ -130,7 +136,6 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                         pull_url, omg = get_by_alias(service, tag)
                     services[service] = {
                         'tag': tag,
-                        'environment': {},
                         'configuration': omg
                     }
                     image = f'{pull_url}:{tag}'
@@ -173,6 +178,7 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                         image,
                         entrypoint=entrypoint,
                         volumes=volumes,
+                        network=self.get_network_stack(),
                         environment=environment.get(service),
                         name=name,
                         detach=True
@@ -195,6 +201,16 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
             self.fwrite(f'**ERROR**\n{error}')
             self.finish()
             raise
+
+    @staticmethod
+    def get_network_stack():
+        docker = Docker.from_env()
+        networks = docker.networks.list(filters={'name': 'asyncy-backend'})
+        if len(networks) > 1:
+            raise Exception('There are more than one '
+                            'networks for asyncy-backend. Please terminate '
+                            'the other running stacks.')
+        return networks[0].name
 
 
 def make_app():
