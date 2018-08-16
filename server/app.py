@@ -1,11 +1,16 @@
 import os
 from storyscript.app import App
 import yaml
+import signal
 import json
+import time
+import logging
 import requests
 import docker as Docker
 import tornado.ioloop
 import tornado.web
+import tornado.httpserver
+from tornado.options import define, options
 from tornado import gen
 from raven.contrib.tornado import AsyncSentryClient
 from raven.contrib.tornado import SentryMixin
@@ -219,13 +224,35 @@ def make_app():
     ])
 
 
+def shutdown():
+    logging.getLogger('torando').info('Stopping http server')
+    server.stop()
+
+    logging.getLogger('torando').info('Will shutdown in %s seconds...', 3)
+    tornado.ioloop.IOLoop.current().stop()
+
+
+def sig_handler(sig, frame):
+    logging.getLogger('torando').warning('Caught signal: %s', sig)
+    tornado.ioloop.IOLoop.current().add_callback(shutdown)
+
+
 if __name__ == "__main__":
+    define("port", default=5000, help='run on the given port', type=int)
+
     app = make_app()
-    app.listen(5000)
+
+    global server
+
+    server = tornado.httpserver.HTTPServer(app)
+    server.listen(options.port)
+
+    signal.signal(signal.SIGTERM, sig_handler)
+    signal.signal(signal.SIGINT, sig_handler)
 
     app.sentry_client = AsyncSentryClient(dsn=os.getenv('SENTRY_DSN'))
     app.sentry_client.extra_context({'environment': os.getenv('ENVIRONMENT'),
                                      'release': '0.0.1'})
     app.sentry_client.user_context({'id': os.getenv('ASYNCY_USER_ID')})
 
-    tornado.ioloop.IOLoop.current().start()
+    tornado.ioloop.IOLoop.instance().start()

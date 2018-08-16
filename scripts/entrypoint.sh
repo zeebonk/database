@@ -8,4 +8,4 @@ fi
 
 # Run
 echo '===> Running Server'
-python -m server.app
+exec python -m server.app
