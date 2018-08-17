@@ -145,6 +145,10 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                     }
                     image = f'{pull_url}:{tag}'
 
+                    # Insert the image link here so that platform-engine
+                    # can use it to start the services later.
+                    omg['image'] = image
+
                     # Shutdown old container
                     try:
                         container = docker.containers.get(name)
@@ -161,6 +165,9 @@ class DeployHandler(SentryMixin, tornado.web.RequestHandler):
                     # Pull new container
                     self.fwrite(f'       {service}... Pulling new container')
                     docker.images.pull(image)
+
+                    # Note: A replica of this code is present in
+                    # platform-engine - Containers.py.
 
                     # create volume list
                     volumes = ['application-volume:/asyncy']
