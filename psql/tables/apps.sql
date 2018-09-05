@@ -33,3 +33,14 @@ COMMENT on column app_dns.hostname is 'A full hostname entry such as foobar.asyn
 COMMENT on column app_dns.is_validated is 'If dns resolves properly from registry.';
 
 CREATE INDEX app_dns_app_uuid_fk on app_dns (app_uuid);
+
+CREATE FUNCTION apps_create_dns() returns trigger as $$
+  begin
+    -- create a random dns
+    insert into app_dns (hostname, app_uuid, is_validated)
+    values (generate_awesome_word(), new.uuid, true);
+  end;
+$$ language plpgsql security definer SET search_path FROM CURRENT;
+
+CREATE TRIGGER _101_apps_create_dns after insert on apps
+  for each row execute procedure apps_create_dns();
