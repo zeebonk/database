@@ -3,9 +3,11 @@ CREATE TABLE apps(
   organization_uuid       uuid references organizations on delete cascade not null,
   repo_uuid               uuid references repos on delete cascade not null,
   name                    title not null,
+  timestamp               timestamptz not null,
   maintenance             boolean default false not null
 );
 COMMENT on table apps is 'Owned by an org, an App is a group of Repos that make up an application.';
+COMMENT on column apps.timestamp is 'Date the application was created.';
 
 CREATE INDEX apps_organization_uuid_fk on apps (organization_uuid);
 CREATE INDEX apps_repo_uuid_fk on apps (repo_uuid);
