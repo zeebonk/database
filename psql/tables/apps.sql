@@ -2,7 +2,7 @@ CREATE TABLE apps(
   uuid                    uuid default uuid_generate_v4() primary key,
   organization_uuid       uuid references organizations on delete cascade not null,
   repo_uuid               uuid references repos on delete cascade,
-  name                    title not null,
+  name                    title unique not null,
   timestamp               timestamptz not null,
   maintenance             boolean default false not null,
   deleted                 boolean default false not null
@@ -36,9 +36,9 @@ CREATE INDEX app_dns_app_uuid_fk on app_dns (app_uuid);
 
 CREATE FUNCTION apps_create_dns() returns trigger as $$
   begin
-    -- create a random dns
+    -- create dns
     insert into app_dns (hostname, app_uuid, is_validated)
-    values (generate_awesome_word(), new.uuid, true);
+    values (new.name, new.uuid, true);
     return new;
   end;
 $$ language plpgsql security definer SET search_path FROM CURRENT;
