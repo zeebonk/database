@@ -3,6 +3,15 @@ CREATE TABLE random_words (
   start boolean not null
 );
 
+CREATE FUNCTION generate_awesome_word() RETURNS text AS $$
+  SELECT
+    (SELECT word FROM random_words where start OFFSET floor(random()*99) LIMIT 1) ||
+    '-' ||
+    (SELECT word FROM random_words where not start OFFSET floor(random()*231) LIMIT 1) ||
+    '-' ||
+    ((random()*1000)::int)::text;
+$$ LANGUAGE sql STABLE SET search_path FROM CURRENT;
+
 INSERT INTO random_words VALUES
 ('admiring', true),
 ('adoring', true),
