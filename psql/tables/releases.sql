@@ -11,6 +11,7 @@ CREATE TABLE releases(
 );
 COMMENT on table releases is 'Identifying the active version of the application.';
 COMMENT on column releases.app_uuid is 'The application this release belongs to.';
+COMMENT on column releases.id is 'The release number of this release (within this app).';
 COMMENT on column releases.config is 'Configuration of the release.';
 COMMENT on column releases.message is 'User defined release message.';
 COMMENT on column releases.owner_uuid is 'The person who submitted the release.';
@@ -19,7 +20,7 @@ COMMENT on column releases.state is 'Identifying which release is active or roll
 COMMENT on column releases.payload is 'An object containing the full payload of Storyscripts, e.g., {"foobar": {"1": ...}}';
 
 CREATE TABLE app_private.release_numbers (
-  app_uuid                uuid references repos on delete cascade primary key,
+  app_uuid                uuid references apps on delete cascade primary key,
   release_number          int not null default 1
 );
 
@@ -31,7 +32,7 @@ CREATE FUNCTION releases_next_id() returns trigger as $$
     -- transaction so that it behaves more like PostgreSQL sequences to avoid
     -- race conditions.
     -- Relevant: http://blog.dalibo.com/2016/08/19/Autonoumous_transactions_support_in_PostgreSQL.html
-    insert into app_private.release_numbers (app_uuid) values (NEW.app_uuid) on conflict (app_uuid) do update set release_number = release_number + 1 returning release_number into v_next_value;
+    insert into app_private.release_numbers (app_uuid) values (NEW.app_uuid) on conflict (app_uuid) do update set release_number = release_numbers.release_number + 1 returning release_number into v_next_value;
     new.id := v_next_value;
     return new;
   end;
