@@ -4,7 +4,8 @@ CREATE TABLE apps(
   repo_uuid               uuid references repos on delete cascade,
   name                    title not null,
   timestamp               timestamptz not null,
-  maintenance             boolean default false not null
+  maintenance             boolean default false not null,
+  deleted                 boolean default false not null
 );
 COMMENT on table apps is 'Owned by an org, an App is a group of Repos that make up an application.';
 COMMENT on column apps.timestamp is 'Date the application was created.';
