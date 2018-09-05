@@ -12,6 +12,16 @@ COMMENT on column apps.timestamp is 'Date the application was created.';
 CREATE INDEX apps_organization_uuid_fk on apps (organization_uuid);
 CREATE INDEX apps_repo_uuid_fk on apps (repo_uuid);
 
+CREATE FUNCTION apps_insert() returns trigger as $$
+  begin
+    new.timestamp := current_timestamp;
+    return new;
+  end;
+$$ language plpgsql security definer SET search_path FROM CURRENT;
+
+CREATE TRIGGER _100_apps_insert before insert on apps
+  for each row execute procedure apps_insert();
+
 CREATE TABLE app_dns(
   hostname                hostname primary key,
   app_uuid                uuid references apps on delete cascade not null,
