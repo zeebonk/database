@@ -40,3 +40,22 @@ $$ language plpgsql security definer SET search_path FROM CURRENT;
 
 CREATE TRIGGER _100_releases_next_id_insert before insert on releases
   for each row execute procedure releases_next_id();
+
+CREATE FUNCTION releases_defaults() returns trigger as $$
+  begin
+    -- set payload and config to the previous release when empty
+    if new.payload is null then
+      new.payload := (select payload from releases where app_uuid=new.app_uuid and id=new.id-1 limit 1);
+    end if;
+    if new.config is null then
+      new.config := (select config from releases where app_uuid=new.app_uuid and id=new.id-1 limit 1);
+    end if;
+
+    -- set timestamp to now    
+    new.timestamp := current_timestamp;
+    return new;
+  end;
+$$ language plpgsql security definer SET search_path FROM CURRENT;
+
+CREATE TRIGGER _101_releases_defaults before insert on releases
+  for each row execute procedure releases_defaults();
