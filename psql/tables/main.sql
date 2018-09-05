@@ -1,6 +1,5 @@
 \ir orgs.sql
 \ir permissions.sql
-\ir random.sql
 \ir owners.sql
 \ir teams.sql
 \ir repos.sql
