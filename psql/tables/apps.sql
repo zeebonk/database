@@ -39,6 +39,7 @@ CREATE FUNCTION apps_create_dns() returns trigger as $$
     -- create a random dns
     insert into app_dns (hostname, app_uuid, is_validated)
     values (generate_awesome_word(), new.uuid, true);
+    return new;
   end;
 $$ language plpgsql security definer SET search_path FROM CURRENT;
 
