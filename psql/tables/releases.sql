@@ -59,3 +59,14 @@ $$ language plpgsql security definer SET search_path FROM CURRENT;
 
 CREATE TRIGGER _101_releases_defaults before insert on releases
   for each row execute procedure releases_defaults();
+  
+CREATE FUNCTION releases_notify() returns trigger as $$
+  begin
+    -- publish new releases to the channel "release"
+    NOTIFY release, new.app_uuid;
+    return null;
+  end;
+$$ language plpgsql security definer SET search_path FROM CURRENT;
+
+CREATE TRIGGER _900_releases_notify after insert on releases
+  for each row execute procedure releases_notify();
