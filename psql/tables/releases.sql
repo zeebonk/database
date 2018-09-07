@@ -70,12 +70,3 @@ $$ language plpgsql security definer SET search_path FROM CURRENT;
 
 CREATE TRIGGER _900_releases_notify after insert on releases
   for each row execute procedure releases_notify();
-
-CREATE VIEW latest_releases AS
-  WITH latest AS (
-      SELECT app_uuid, max(id) AS id
-      FROM app_public.releases
-      GROUP BY app_uuid
-  ) SELECT app_uuid, id, config, message, owner_uuid, timestamp, payload
-    FROM latest
-    INNER JOIN releases USING (app_uuid, id);
