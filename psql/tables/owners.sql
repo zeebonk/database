@@ -50,7 +50,6 @@ CREATE or replace FUNCTION createOwnerByLogin(
     email email,
     oauth_token text
 ) RETURNS json AS $$
-  #variable_conflict use_variable
   DECLARE _owner_uuid uuid DEFAULT NULL;
   DECLARE _token_uuid uuid DEFAULT NULL;
   BEGIN
@@ -59,16 +58,16 @@ CREATE or replace FUNCTION createOwnerByLogin(
     -- TODO IF (service, service_id) conflict THEN need to update the username
 
     SELECT uuid into _owner_uuid
-      FROM owners
-      WHERE service=service
-        AND username=username
+      FROM owners o
+      WHERE o.service=$1
+        AND o.username=$3
       LIMIT 1;
 
     IF _owner_uuid IS NOT NULL THEN
 
       -- update their oauth token
-      UPDATE owner_secrets
-        SET oauth_token=oauth_token
+      UPDATE owner_secrets o
+        SET o.oauth_token=$6
         WHERE owner_uuid=_owner_uuid;
 
       SELECT uuid into _token_uuid
@@ -80,14 +79,14 @@ CREATE or replace FUNCTION createOwnerByLogin(
     ELSE
       
       INSERT INTO owners (service, service_id, is_user, username, name)
-        VALUES (service, service_id, true, username, name)
+        VALUES ($1, $2, true, $3, $4)
         RETURNING uuid into _owner_uuid;
 
       INSERT INTO owner_emails (owner_uuid, email, is_verified)
-        VALUES (_owner_uuid, email, true);
+        VALUES (_owner_uuid, $5, true);
       
       UPDATE owner_secrets
-        SET oauth_token=oauth_token
+        SET oauth_token=$6
         WHERE owner_uuid=_owner_uuid;
 
     END IF;
