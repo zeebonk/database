@@ -3,7 +3,7 @@ CREATE TABLE apps(
   organization_uuid       uuid references organizations on delete cascade,
   owner_uuid              uuid references owners on delete cascade,
   repo_uuid               uuid references repos on delete cascade,
-  name                    title unique not null,
+  name                    title not null,
   timestamp               timestamptz not null,
   maintenance             boolean default false not null,
   deleted                 boolean default false not null,
@@ -11,7 +11,9 @@ CREATE TABLE apps(
       CHECK (
         NOT (organization_uuid IS NOT NULL AND owner_uuid IS NOT NULL)
         AND (organization_uuid IS NOT NULL OR owner_uuid IS NOT NULL)
-      )
+      ),
+  UNIQUE (organization_uuid, name),
+  UNIQUE (owner_uuid, name)
 );
 COMMENT on table apps is 'Owned by an org, an App is a group of Repos that make up an application.';
 COMMENT on column apps.timestamp is 'Date the application was created.';
