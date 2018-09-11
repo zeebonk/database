@@ -19,13 +19,6 @@ COMMENT on index owner_service_username is 'Can only have one service:username p
 CREATE UNIQUE INDEX owner_service_ids on owners (service, service_id);
 COMMENT on index owner_service_ids is 'Can only have one service:service_id pair.';
 
-
-CREATE TABLE owner_permissions (
-  owner_uuid              uuid not null references owners on delete cascade,
-  permission_uuid         uuid not null references permissions on delete restrict,
-  PRIMARY KEY (owner_uuid, permission_uuid)
-);
-
 CREATE TABLE owner_emails (
   uuid                    uuid default uuid_generate_v4() primary key,
   owner_uuid              uuid not null references owners on delete cascade,
