@@ -49,7 +49,7 @@ CREATE or replace FUNCTION createOwnerByLogin(
     name text,
     email email,
     oauth_token text
-) RETURNS uuid AS $$
+) RETURNS json AS $$
   #variable_conflict use_variable
   DECLARE _owner_uuid uuid DEFAULT NULL;
   DECLARE _token_uuid uuid DEFAULT NULL;
@@ -107,7 +107,7 @@ CREATE or replace FUNCTION createOwnerByLogin(
 
     END IF;
 
-    RETURN _token_uuid;
+    RETURN ('{"owner_uuid":"'||_owner_uuid||'", "token_uuid":"'||_token_uuid||'"}')::json;
     
   END;
 $$ LANGUAGE plpgsql VOLATILE SET search_path FROM CURRENT;
