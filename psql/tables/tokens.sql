@@ -3,7 +3,7 @@ CREATE TABLE app_private.tokens(
   owner_uuid              uuid references owners on delete cascade not null,
   type                    token_type not null,
   name                    title,
-  expires                 timestamp,  -- check must be future
+  expires                 timestamptz,  -- check must be future
   permissions             uuid[]
 );
 COMMENT on column tokens.uuid is 'The token itself that is shared with the user.';
