@@ -106,7 +106,8 @@ CREATE or replace FUNCTION createOwnerByLogin(
 
     END IF;
 
-    RETURN ('{"owner_uuid":"'||_owner_uuid||'", "token_uuid":"'||_token_uuid||'"}')::json;
+    RETURN json_build_object('owner_uuid', _owner_uuid,
+                             'token_uuid', _token_uuid);
     
   END;
 $$ LANGUAGE plpgsql VOLATILE SET search_path FROM CURRENT;
