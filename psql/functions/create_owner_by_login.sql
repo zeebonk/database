@@ -22,8 +22,8 @@ CREATE or replace FUNCTION create_owner_by_login(
     IF _owner_uuid IS NOT NULL THEN
 
       -- update their oauth token
-      UPDATE owner_secrets o
-        SET o.oauth_token=$6
+      UPDATE owner_secrets
+        SET oauth_token=$6
         WHERE owner_uuid=_owner_uuid;
 
       SELECT uuid into _token_uuid
