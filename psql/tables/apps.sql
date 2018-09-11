@@ -1,16 +1,26 @@
 CREATE TABLE apps(
   uuid                    uuid default uuid_generate_v4() primary key,
-  organization_uuid       uuid references organizations on delete cascade not null,
+  organization_uuid       uuid references organizations on delete cascade,
+  owner_uuid              uuid references owners on delete cascade,
   repo_uuid               uuid references repos on delete cascade,
   name                    title unique not null,
   timestamp               timestamptz not null,
   maintenance             boolean default false not null,
-  deleted                 boolean default false not null
+  deleted                 boolean default false not null,
+  CONSTRAINT must_have_one_owner
+      CHECK (
+        NOT (organization_uuid IS NOT NULL AND owner_uuid IS NOT NULL)
+        AND (organization_uuid IS NOT NULL OR owner_uuid IS NOT NULL)
+      )
 );
 COMMENT on table apps is 'Owned by an org, an App is a group of Repos that make up an application.';
 COMMENT on column apps.timestamp is 'Date the application was created.';
+COMMENT on column apps.organization_uuid is 'The Organization that owns this application.';
+COMMENT on column apps.owner_uuid is 'The Owner that owns this application.';
+COMMENT on column apps.repo_uuid is 'The Repository linked to this application.';
 
 CREATE INDEX apps_organization_uuid_fk on apps (organization_uuid);
+CREATE INDEX apps_owners_uuid_fk on apps (owner_uuid);
 CREATE INDEX apps_repo_uuid_fk on apps (repo_uuid);
 
 CREATE FUNCTION apps_insert() returns trigger as $$
