@@ -4,13 +4,13 @@ CREATE TABLE app_private.tokens(
   type                    token_type not null,
   name                    title,
   expires                 timestamptz,  -- check must be future
-  permissions             uuid[]
+  permissions             text[]
 );
 COMMENT on column tokens.uuid is 'The token itself that is shared with the user.';
 COMMENT on column tokens.type is 'User login, api token, or application link.';
 COMMENT on column tokens.name is 'A custom title for the login.';
 COMMENT on column tokens.expires is 'Date the token should expire on.';
-COMMENT on column tokens.permissions is 'List of permissions this token has privileges too.';
+COMMENT on column tokens.permissions is 'List of permission slugs this token has privileges too.';
 
 CREATE INDEX token_owner_uuid_fk on tokens (owner_uuid);
 

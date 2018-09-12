@@ -1,8 +1,14 @@
 CREATE TABLE permissions(
-  uuid                       uuid default uuid_generate_v4() primary key,
+  slug                       text not null check (slug ~ '^[A-Z_]+$') primary key,
   title                      title not null
 );
 COMMENT on column permissions.title is 'Short description of the permission.';
+
+INSERT INTO permissions (slug, title) VALUES
+  ('BILLING', 'Billing'),
+  ('CREATE_APP', 'Create application'),
+  ('EDIT_CONFIG', 'Edit configuration'),
+  ('CREATE_RELEASE', 'Create release');
 
 
 CREATE FUNCTION assert_permissions_exist() returns trigger as $$
@@ -12,9 +18,9 @@ begin
   end if;
   if exists(
     select 1
-    from unnest(NEW.permissions) puuid
-    left join permissions on (puuid = permissions.uuid)
-    where permissions.uuid is null
+    from unnest(NEW.permissions) pslug
+    left join permissions on (pslug = permissions.slug)
+    where permissions.slug is null
   ) then
     raise exception 'Invalid permissions, permission unrecognised' using errcode = 'SECPX';
   end if;

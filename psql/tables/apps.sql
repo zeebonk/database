@@ -7,11 +7,9 @@ CREATE TABLE apps(
   timestamp               timestamptz not null,
   maintenance             boolean default false not null,
   deleted                 boolean default false not null,
-  CONSTRAINT must_have_one_owner
-      CHECK (
-        NOT (organization_uuid IS NOT NULL AND owner_uuid IS NOT NULL)
-        AND (organization_uuid IS NOT NULL OR owner_uuid IS NOT NULL)
-      ),
+  CONSTRAINT must_have_exactly_one_owner CHECK (
+    (organization_uuid IS NULL) <> (owner_uuid IS NULL)
+  ),
   UNIQUE (organization_uuid, name),
   UNIQUE (owner_uuid, name)
 );

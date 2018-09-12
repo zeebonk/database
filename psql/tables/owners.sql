@@ -28,9 +28,9 @@ CREATE TABLE owner_emails (
 
 CREATE UNIQUE INDEX ON owner_emails(owner_uuid, email); -- This index serves two purposes
 
-CREATE TABLE owner_secrets (
+CREATE TABLE app_private.owner_secrets (
   owner_uuid              uuid primary key references owners on delete cascade,
   oauth_token             varchar(45),
   email_verification_code varchar(30)
 );
-COMMENT on column owner_secrets.oauth_token is 'Stored as an encrypted string';
+COMMENT on column app_private.owner_secrets.oauth_token is 'Stored as an encrypted string';
