@@ -1,0 +1,1 @@
+nodemon --watch psql -e sql -x './reset_and_seed.sh' 
