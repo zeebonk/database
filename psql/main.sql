@@ -15,4 +15,5 @@ INSERT INTO app_private.version values ('0.0.1');
 \ir types.sql
 \ir tables/main.sql
 \ir functions/main.sql
+\ir permissions/main.sql
 \ir triggers/main.sql
