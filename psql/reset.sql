@@ -7,25 +7,21 @@ DROP EXTENSION IF EXISTS "pgcrypto";
 DROP EXTENSION IF EXISTS "uuid-ossp";
 DROP EXTENSION IF EXISTS "citext";
 
-DROP ROLE IF EXISTS asyncy_visitor;
+REVOKE ALL ON DATABASE asyncy FROM PUBLIC;
+
 DO $$
 BEGIN
-  IF EXISTS(SELECT 1 FROM pg_roles WHERE rolname = 'asyncy_authenticator') THEN
-    REVOKE CONNECT ON DATABASE asyncy FROM asyncy_authenticator;
+  IF NOT EXISTS(SELECT 1 FROM pg_roles WHERE rolname = 'asyncy_authenticator') THEN
+    CREATE ROLE asyncy_authenticator WITH LOGIN PASSWORD 'PLEASE_CHANGE_ME' NOINHERIT;
+  END IF;
+  IF NOT EXISTS(SELECT 1 FROM pg_roles WHERE rolname = 'asyncy_visitor') THEN
+    CREATE ROLE asyncy_visitor;
   END IF;
 END;
 $$ LANGUAGE plpgsql;
-DROP ROLE IF EXISTS asyncy_authenticator;
-
-CREATE ROLE asyncy_authenticator WITH LOGIN PASSWORD 'PLEASE_CHANGE_ME' NOINHERIT;
-CREATE ROLE asyncy_visitor;
 GRANT asyncy_visitor to asyncy_authenticator;
-
-REVOKE ALL ON DATABASE asyncy FROM PUBLIC;
 GRANT CONNECT ON DATABASE asyncy TO asyncy_authenticator;
 
 ---
 
-BEGIN;
 \ir ./main.sql
-COMMIT;
