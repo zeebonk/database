@@ -46,3 +46,6 @@ insert into apps(uuid, organization_uuid, repo_uuid, name, timestamp) values ('E
 insert into releases(app_uuid, message, owner_uuid, timestamp, payload) values ('E9E97287-3AAC-44DF-A5E0-67AA42F00429', 'Blah 1', 'EB0C25D8-5B5A-43F6-81B4-1A3880243C96', now(), jsonb_build_object());
 insert into releases(app_uuid, message, owner_uuid, timestamp, payload) values ('E9E97287-3AAC-44DF-A5E0-67AA42F00429', 'Blah 1', 'EB0C25D8-5B5A-43F6-81B4-1A3880243C96', now(), jsonb_build_object());
 insert into releases(app_uuid, message, owner_uuid, timestamp, payload) values ('E9E97287-3AAC-44DF-A5E0-67AA42F00429', 'Blah 1', 'EB0C25D8-5B5A-43F6-81B4-1A3880243C96', now(), jsonb_build_object());
+
+insert into tokens(uuid, owner_uuid, type, name) VALUES ('901A9BC2-5FD6-4A42-B54A-BD9242D8DE5C', 'EB0C25D8-5B5A-43F6-81B4-1A3880243C96', 'API', 'Test API Token');
+update token_secrets set secret = 'c2poZGYwOXcwZWZmMGRnaGY=' WHERE token_uuid = '901A9BC2-5FD6-4A42-B54A-BD9242D8DE5C';
