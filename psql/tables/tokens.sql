@@ -16,12 +16,12 @@ CREATE INDEX token_owner_uuid_fk on tokens (owner_uuid);
 
 CREATE TRIGGER _100_insert_assert_permissions_exist before insert on tokens
   for each row
-  when (array_length(new.permissions, 1) > 0)
+  when (cardinality(new.permissions) > 0)
   execute procedure assert_permissions_exist();
 
 CREATE TRIGGER _100_update_assert_permissions_exist before update on tokens
   for each row
-  when (new.permissions is distinct from old.permissions and array_length(new.permissions, 1) > 0)
+  when (new.permissions is distinct from old.permissions and cardinality(new.permissions) > 0)
   execute procedure assert_permissions_exist();
 
 CREATE TABLE app_private.token_secrets (

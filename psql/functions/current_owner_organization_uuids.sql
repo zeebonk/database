@@ -1,15 +1,14 @@
 CREATE FUNCTION app_hidden.current_owner_organization_uuids(required_permission_slugs text[] = array[]::text[]) RETURNS uuid[] AS $$
   SELECT array_agg(distinct uuid)
   FROM (
-    SELECT organizations.uuid
+    SELECT teams.organization_uuid uuid
     FROM members
     INNER JOIN teams ON (members.team_uuid = teams.uuid)
-    INNER JOIN organizations ON (teams.organization_uuid = organizations.uuid)
     WHERE members.owner_uuid = current_owner_uuid()
-    GROUP BY organizations.uuid
+    GROUP BY teams.organization_uuid
     HAVING
       (
-        array_length(required_permission_slugs, 1) = 0
+        cardinality(required_permission_slugs) = 0
       OR
         (
           -- This is the full set of permissions the user has for all the teams across this organization
