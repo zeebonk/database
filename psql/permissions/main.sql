@@ -7,3 +7,4 @@
 \ir ./permissions.sql
 \ir ./plans.sql
 \ir ./releases.sql
+\ir ./services.sql
