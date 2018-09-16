@@ -1,4 +1,4 @@
-\ir orgs.sql
+\ir organizations.sql
 \ir permissions.sql
 \ir owners.sql
 \ir teams.sql
