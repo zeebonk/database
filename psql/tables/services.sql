@@ -27,6 +27,8 @@ COMMENT on column services.public is 'If the service is publicly available';
 
 CREATE UNIQUE INDEX services_repo_uuid_fk on services (repo_uuid);
 CREATE INDEX services_tsvector_idx ON services USING GIN (tsvector);
+CREATE INDEX services_organization_uuid_fk on services (organization_uuid);
+CREATE INDEX services_owners_uuid_fk on services (owner_uuid);
 
 CREATE FUNCTION services__update_tsvector() RETURNS trigger AS $$
 BEGIN
