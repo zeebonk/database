@@ -47,12 +47,12 @@ CREATE TRIGGER _200_update_tsvector_update BEFORE UPDATE ON services FOR EACH RO
 CREATE TYPE service_state as enum('DEVELOPMENT', 'PRERELEASE', 'BETA', 'STABLE', 'ARCHIVED');
 
 CREATE TABLE service_tags(
-  tag                        citext not null,
   service_uuid               uuid references services on delete cascade not null,
+  tag                        citext not null,
   state                      service_state not null,
   configuration              jsonb not null,
   readme                     text,
-  primary key (tag, service_uuid)
+  primary key (service_uuid, tag)
 );
 
 COMMENT on column service_tags.tag is 'The verion identifier. E.g., latest or v1.2';
