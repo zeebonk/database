@@ -1,0 +1,3 @@
+# npm install -g nodemon
+
+nodemon --watch psql ${DB:-asyncy} -e sql -x './reset_and_seed.sh'

@@ -16,13 +16,13 @@ CREATE or replace FUNCTION create_owner_by_login(
     SELECT uuid into _owner_uuid
       FROM owners o
       WHERE o.service=$1
-        AND o.username=$3
+        AND o.service_id=$2
       LIMIT 1;
 
     IF _owner_uuid IS NOT NULL THEN
 
       -- update their oauth token
-      UPDATE owner_secrets
+      UPDATE app_private.owner_secrets
         SET oauth_token=$6
         WHERE owner_uuid=_owner_uuid;
 
@@ -41,7 +41,7 @@ CREATE or replace FUNCTION create_owner_by_login(
       INSERT INTO owner_emails (owner_uuid, email, is_verified)
         VALUES (_owner_uuid, $5, true);
 
-      UPDATE owner_secrets
+      UPDATE app_private.owner_secrets
         SET oauth_token=$6
         WHERE owner_uuid=_owner_uuid;
 

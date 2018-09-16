@@ -9,14 +9,14 @@ CREATE TABLE services(
   is_certified               boolean not null default false,
   links                      jsonb,
   tsvector                   tsvector,
-  public                     boolean not null
+  public                     boolean not null default false
 );
 COMMENT on column services.alias is 'The namespace reservation for the container';
 COMMENT on column services.pull_url is 'Address where the container can be pulled from.';
 COMMENT on column services.topics is 'GitHub repository topics for searching services.';
 COMMENT on column services.links is 'Custom links';
 COMMENT on column services.tsvector is E'@omit\nThis field will not be exposed to GraphQL, it''s for internal use only.';
-COMMENT on column services.public is 'If the service is publically available';
+COMMENT on column services.public is 'If the service is publicly available';
 
 CREATE INDEX services_repo_uuid_fk on services (repo_uuid);
 CREATE INDEX services_tsvector_idx ON services USING GIN (tsvector);

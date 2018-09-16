@@ -3,8 +3,8 @@ CREATE TABLE releases(
   id                      int CHECK (id > 0) not null default 0,
   config                  jsonb,
   message                 text CHECK (LENGTH(message) < 1000) not null,
-  owner_uuid              uuid references owners on delete set null,
-  timestamp               timestamptz not null,
+  owner_uuid              uuid not null default current_owner_uuid() references owners on delete set null,
+  timestamp               timestamptz not null default now(),
   state                   release_state not null default 'QUEUED'::release_state,
   payload                 jsonb not null,
   primary key (app_uuid, id)

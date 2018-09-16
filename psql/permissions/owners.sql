@@ -1,0 +1,19 @@
+ALTER TABLE owners ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY select_all ON owners FOR SELECT USING (true);
+GRANT SELECT ON owners TO asyncy_visitor;
+
+----
+
+ALTER TABLE owner_emails ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY select_own ON owner_emails FOR SELECT USING (owner_uuid = current_owner_uuid());
+GRANT SELECT ON owner_emails TO asyncy_visitor;
+
+CREATE POLICY insert_own ON owner_emails FOR INSERT WITH CHECK (owner_uuid = current_owner_uuid());
+GRANT INSERT (owner_uuid, email) ON owner_emails TO asyncy_visitor;
+
+-- DO NOT grant UPDATE! Only the system can update an email (to change the verified status)
+
+CREATE POLICY delete_own ON owner_emails FOR DELETE USING (owner_uuid = current_owner_uuid());
+GRANT DELETE ON owner_emails TO asyncy_visitor;
