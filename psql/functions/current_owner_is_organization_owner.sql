@@ -1,4 +1,4 @@
-CREATE FUNCTION app_hidden.current_owner_is_organization_admin(organization_uuid uuid) RETURNS boolean AS $$
+CREATE FUNCTION app_hidden.current_owner_is_organization_owner(organization_uuid uuid) RETURNS boolean AS $$
   SELECT true
   FROM organizations
   WHERE uuid = organization_uuid

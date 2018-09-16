@@ -7,7 +7,7 @@ CREATE FUNCTION app_hidden.current_owner_has_app_permissions(app_uuid uuid, requ
     owner_uuid = current_owner_uuid()
   OR
     -- If the user is an Admin of the organization
-    current_owner_is_organization_admin(organization_uuid)
+    current_owner_is_organization_owner(organization_uuid)
   OR
     (
       SELECT true
