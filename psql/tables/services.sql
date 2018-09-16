@@ -1,7 +1,9 @@
 CREATE TABLE services(
   uuid                       uuid default uuid_generate_v4() primary key,
   repo_uuid                  uuid references repos on delete cascade not null,
-  title                      title,
+  organization_uuid          uuid references organizations on delete cascade,
+  owner_uuid                 uuid references owners on delete cascade,
+  title                      title not null,
   description                text,
   alias                      alias unique,
   pull_url                   text,
@@ -9,7 +11,10 @@ CREATE TABLE services(
   is_certified               boolean not null default false,
   links                      jsonb,
   tsvector                   tsvector,
-  public                     boolean not null default false
+  public                     boolean not null default false,
+  CONSTRAINT must_have_exactly_one_owner CHECK (
+    (organization_uuid IS NULL) <> (owner_uuid IS NULL)
+  )
 );
 COMMENT on column services.alias is 'The namespace reservation for the container';
 COMMENT on column services.pull_url is 'Address where the container can be pulled from.';

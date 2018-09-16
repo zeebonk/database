@@ -5,6 +5,6 @@ DECLARE
 BEGIN
   INSERT INTO owners (uuid, service_id, username, name) values (v_user1_uuid, '23598043290', 'user1', 'User One');
   INSERT INTO repos (uuid, owner_uuid, service_id, name) values (v_repo1_uuid, v_user1_uuid, '92385348957239', 'repo1');
-  INSERT INTO services (repo_uuid, alias, topics) values (v_repo1_uuid, 'repo1', ARRAY['topic', 'database', 'repo', 'microservices']::citext[]);
+  INSERT INTO services (repo_uuid, alias, topics, title, owner_uuid) values (v_repo1_uuid, 'repo1', ARRAY['topic', 'database', 'repo', 'microservices']::citext[], 'Foobar', v_user1_uuid);
 END;
 $$ LANGUAGE plpgsql;
