@@ -23,7 +23,7 @@ COMMENT on column services.links is 'Custom links';
 COMMENT on column services.tsvector is E'@omit\nThis field will not be exposed to GraphQL, it''s for internal use only.';
 COMMENT on column services.public is 'If the service is publicly available';
 
-CREATE INDEX services_repo_uuid_fk on services (repo_uuid);
+CREATE UNIQUE INDEX services_repo_uuid_fk on services (repo_uuid);
 CREATE INDEX services_tsvector_idx ON services USING GIN (tsvector);
 
 CREATE FUNCTION services__update_tsvector() RETURNS trigger AS $$
