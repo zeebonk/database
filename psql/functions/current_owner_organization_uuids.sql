@@ -2,9 +2,9 @@ CREATE FUNCTION app_hidden.current_owner_organization_uuids(required_permission_
   SELECT array_agg(distinct uuid)
   FROM (
     SELECT teams.organization_uuid uuid
-    FROM members
-    INNER JOIN teams ON (members.team_uuid = teams.uuid)
-    WHERE members.owner_uuid = current_owner_uuid()
+    FROM team_members
+    INNER JOIN teams ON (team_members.team_uuid = teams.uuid)
+    WHERE team_members.owner_uuid = current_owner_uuid()
     GROUP BY teams.organization_uuid
     HAVING
       (
