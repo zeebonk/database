@@ -4,6 +4,7 @@ CREATE TABLE services(
   organization_uuid          uuid references organizations on delete cascade,
   owner_uuid                 uuid references owners on delete cascade,
   title                      title not null,
+  category                   uuid references categories on delete set null,
   description                text,
   alias                      alias unique,
   pull_url                   text,
@@ -17,6 +18,7 @@ CREATE TABLE services(
   )
 );
 COMMENT on column services.alias is 'The namespace reservation for the container';
+COMMENT on column services.category is 'The category this service belongs too.';
 COMMENT on column services.pull_url is 'Address where the container can be pulled from.';
 COMMENT on column services.topics is 'GitHub repository topics for searching services.';
 COMMENT on column services.links is 'Custom links';
