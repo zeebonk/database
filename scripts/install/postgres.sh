@@ -11,7 +11,7 @@ done
 
 cli_args="-h ${POSTGRES_HOST:-postgres} -U ${POSTGRES_USER:-postgres} -p ${POSTGRES_PORT:-5432} -v ON_ERROR_STOP=1"
 
-res=$(psql $cli_args -Atc "SELECT version FROM app_public.version ORDER BY id DESC LIMIT 1;" || echo '')
+res=$(psql $cli_args -Atc "SELECT version FROM app_private.version ORDER BY version DESC LIMIT 1;" || echo '')
 
 if [ "$res" = "" ]; then
   echo '===> Setting up PostgreSQL'
