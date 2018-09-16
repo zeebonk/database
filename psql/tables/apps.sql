@@ -4,7 +4,7 @@ CREATE TABLE apps(
   owner_uuid              uuid references owners on delete cascade,
   repo_uuid               uuid references repos on delete cascade,
   name                    title not null,
-  timestamp               timestamptz not null,
+  timestamp               timestamptz not null default now(),
   maintenance             boolean default false not null,
   deleted                 boolean default false not null,
   CONSTRAINT must_have_exactly_one_owner CHECK (
@@ -22,16 +22,6 @@ COMMENT on column apps.repo_uuid is 'The Repository linked to this application.'
 CREATE INDEX apps_organization_uuid_fk on apps (organization_uuid);
 CREATE INDEX apps_owners_uuid_fk on apps (owner_uuid);
 CREATE INDEX apps_repo_uuid_fk on apps (repo_uuid);
-
-CREATE FUNCTION apps_insert() returns trigger as $$
-  begin
-    new.timestamp := current_timestamp;
-    return new;
-  end;
-$$ language plpgsql security definer SET search_path FROM CURRENT;
-
-CREATE TRIGGER _100_apps_insert before insert on apps
-  for each row execute procedure apps_insert();
 
 CREATE TABLE app_dns(
   hostname                hostname primary key,
