@@ -1,10 +1,41 @@
+CREATE TABLE service_categories(
+  uuid                  uuid default uuid_generate_v4() primary key,
+  title                 title,
+  icon                  citext,
+  type                  category_type not null
+);
+COMMENT on table service_categories is 'Collection of services.';
+
+INSERT INTO service_categories (title, icon, type) values
+  ('Authentication', null, 'SERVICE'),
+  ('CMS', null, 'SERVICE'),
+  ('Database', null, 'SERVICE'),
+  ('Logging', null, 'SERVICE'),
+  ('Memory Store', null, 'SERVICE'),
+  ('Messaging', null, 'SERVICE'),
+  ('Monitoring', null, 'SERVICE'),
+  ('Optimization', null, 'SERVICE'),
+  ('Search', null, 'SERVICE'),
+  ('Social Media', null, 'SERVICE'),
+  ('Video Processing', null, 'SERVICE'),
+  ('Image Processing', null, 'SERVICE'),
+  ('Text Processing', null, 'SERVICE'),
+  ('Machine Learning', null, 'SERVICE'),
+  ('Programming Languages', null, 'SERVICE'),
+  ('Developer Tools', null, 'SERVICE'),
+  ('IoT', null, 'SERVICE'),
+  ('Worker', null, 'SERVICE'),
+  ('Sorting', null, 'FUNCTION'),
+  ('Filtering', null, 'FUNCTION'),
+  ('Strings', null, 'FUNCTION');
+
 CREATE TABLE services(
   uuid                       uuid default uuid_generate_v4() primary key,
   repo_uuid                  uuid references repos on delete cascade not null,
   organization_uuid          uuid references organizations on delete cascade,
   owner_uuid                 uuid references owners on delete cascade,
   title                      title not null,
-  category                   uuid references categories on delete set null,
+  category                   uuid references service_categories on delete set null,
   description                text,
   alias                      alias unique,
   pull_url                   text,

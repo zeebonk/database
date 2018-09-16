@@ -2,7 +2,6 @@
 \ir ./builds.sql
 \ir ./members.sql
 \ir ./organizations.sql
-\ir ./categories.sql
 \ir ./owners.sql
 \ir ./permissions.sql
 \ir ./plans.sql

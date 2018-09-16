@@ -11,3 +11,10 @@ ALTER TABLE service_tags ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY select_tag ON service_tags FOR SELECT USING (EXISTS(SELECT 1 FROM services WHERE services.uuid = service_tags.service_uuid));
 GRANT SELECT ON service_tags TO asyncy_visitor;
+
+---
+
+ALTER TABLE service_categories ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY select_all ON service_categories FOR SELECT USING (true);
+GRANT SELECT ON service_categories TO asyncy_visitor;

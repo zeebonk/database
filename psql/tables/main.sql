@@ -3,7 +3,6 @@
 \ir owners.sql
 \ir teams.sql
 \ir repos.sql
-\ir categories.sql
 \ir services.sql
 \ir builds.sql
 \ir apps.sql
