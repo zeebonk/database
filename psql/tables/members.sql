@@ -4,3 +4,4 @@ CREATE TABLE members(
   primary key (team_uuid, owner_uuid)
 );
 COMMENT on table members is 'Collection of users that belong to a team.';
+COMMENT on column members.owner_uuid is 'The member of the team.';
