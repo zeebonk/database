@@ -50,16 +50,13 @@ CREATE FUNCTION releases_defaults() returns trigger as $$
     if new.config is null then
       new.config := (select config from releases where app_uuid=new.app_uuid and id=new.id-1 limit 1);
     end if;
-
-    -- set timestamp to now    
-    new.timestamp := current_timestamp;
     return new;
   end;
 $$ language plpgsql security definer SET search_path FROM CURRENT;
 
 CREATE TRIGGER _101_releases_defaults before insert on releases
   for each row execute procedure releases_defaults();
-  
+
 CREATE FUNCTION releases_notify() returns trigger as $$
   begin
     -- publish new releases to the channel "release"
