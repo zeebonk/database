@@ -12,6 +12,7 @@ CREATE INDEX teams_owner_uuid_fk on teams (organization_uuid);
 CREATE TABLE team_permissions (
   team_uuid               uuid not null references teams on delete cascade,
   permission_slug         text not null references permissions on delete restrict,
+  organization_uuid       uuid not null references organizations on delete cascade,
   PRIMARY KEY (team_uuid, permission_slug)
 );
 
