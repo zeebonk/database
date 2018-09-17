@@ -1,8 +1,6 @@
 -- Permission helper functions (hidden)
 \ir current_owner_organization_uuids.sql
-\ir current_owner_is_organization_owner.sql
-\ir current_owner_has_permission.sql
-\ir current_owner_has_admin_permission.sql
+\ir current_owner_has_organization_permission.sql
 \ir current_owner_has_app_permissions.sql
 
 -- Custom query functions (exposed to GraphQL)
