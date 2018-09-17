@@ -30,3 +30,5 @@ CREATE TYPE release_state as enum('PREVIOUS', 'ACTIVE', 'NEXT', 'ROLLBACK', 'QUE
 CREATE TYPE token_type as enum('API', 'LOGIN', 'APP');
 
 CREATE TYPE category_type as enum('SERVICE', 'FUNCTION');
+
+CREATE TYPE environment as enum('PRODUCTION', 'STAGING', 'DEV');

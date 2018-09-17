@@ -7,6 +7,7 @@ CREATE TABLE apps(
   timestamp               timestamptz not null default now(),
   maintenance             boolean default false not null,
   deleted                 boolean default false not null,
+  environment             environment not null default 'PRODUCTION'::environment,
   CONSTRAINT must_have_exactly_one_owner CHECK (
     (organization_uuid IS NULL) <> (owner_uuid IS NULL)
   ),
