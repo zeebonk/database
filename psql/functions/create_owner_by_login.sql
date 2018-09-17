@@ -1,4 +1,4 @@
-CREATE or replace FUNCTION create_owner_by_login(
+CREATE FUNCTION app_private.create_owner_by_login(
     service app_public.git_service,
     service_id text,
     username username,
