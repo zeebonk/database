@@ -11,7 +11,7 @@ CREATE FUNCTION app_hidden.current_owner_has_organization_permission(organizatio
     INNER JOIN team_members USING (team_uuid)
     WHERE team_permissions.organization_uuid = organization_uuid
     AND team_members.owner_uuid = current_owner_uuid()
-    AND team_permissions.permission_slug = required_permission_slug
+    AND team_permissions.permission_slug IN (required_permission_slug, 'ADMIN')
     LIMIT 1
   );
 $$ LANGUAGE sql STABLE STRICT SECURITY DEFINER SET search_path FROM CURRENT;
