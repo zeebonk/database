@@ -5,9 +5,9 @@ CREATE TABLE permissions(
 COMMENT on column permissions.title is 'Short description of the permission.';
 
 INSERT INTO permissions (slug, title) VALUES
+  ('ADMIN', 'Organization administrator'),
   ('BILLING', 'Billing'),
   ('CREATE_APP', 'Create application'),
-  ('EDIT_CONFIG', 'Edit configuration'),
   ('CREATE_RELEASE', 'Create release');
 
 

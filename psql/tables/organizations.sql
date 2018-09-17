@@ -4,6 +4,8 @@ CREATE TABLE organizations(
   name                    title not null
 );
 COMMENT on table organizations is 'An organization is a collection of many teams, apps and repositories.';
+COMMENT on column organizations.owner_uuid is 'The owner of the Organization.';
+
 
 CREATE INDEX ON organizations (owner_uuid);
 
