@@ -12,12 +12,10 @@ ALTER TABLE team_permissions ENABLE ROW LEVEL SECURITY;
 CREATE POLICY select_organization ON team_permissions FOR SELECT USING (EXISTS(SELECT 1 FROM teams WHERE teams.uuid = team_uuid));
 GRANT SELECT ON team_permissions TO asyncy_visitor;
 
-CREATE POLICY insert_admin ON team_permissions FOR INSERT WITH CHECK
-  (current_owner_has_organization_permission((SELECT organization_uuid FROM teams WHERE teams.uuid = team_uuid), 'ADMIN'));
+CREATE POLICY insert_admin ON team_permissions FOR INSERT WITH CHECK (current_owner_has_organization_permission(organization_uuid, 'ADMIN'));
 GRANT INSERT ON team_permissions TO asyncy_visitor;
 
-CREATE POLICY delete_admin ON team_permissions FOR DELETE USING
-  (current_owner_has_organization_permission((SELECT organization_uuid FROM teams WHERE teams.uuid = team_uuid), 'ADMIN'));
+CREATE POLICY delete_admin ON team_permissions FOR DELETE USING (current_owner_has_organization_permission(organization_uuid, 'ADMIN'));
 GRANT DELETE ON team_permissions TO asyncy_visitor;
 
 ---
