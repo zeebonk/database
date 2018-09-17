@@ -1,4 +1,4 @@
-CREATE FUNCTION app_hidden.current_owner_has_app_permissions(app_uuid uuid, required_permission_slug text) RETURNS boolean AS $$
+CREATE FUNCTION app_hidden.current_owner_has_app_permission(app_uuid uuid, required_permission_slug text) RETURNS boolean AS $$
   SELECT EXISTS(
     SELECT 1
     FROM apps
@@ -23,12 +23,12 @@ CREATE FUNCTION app_hidden.current_owner_has_app_permissions(app_uuid uuid, requ
         INNER JOIN team_apps USING (team_uuid)
         WHERE team_apps.app_uuid = app_uuid
         AND team_members.owner_uuid = current_owner_uuid()
-        AND required_permission_slug IN (team_permissions.permission_slug, 'ADMIN')
+        AND team_permissions.permission_slug IN (required_permission_slug, 'ADMIN')
         LIMIT 1
       ))
     )
   );
 $$ LANGUAGE sql STABLE STRICT SECURITY DEFINER SET search_path FROM CURRENT;
 
-COMMENT ON FUNCTION app_hidden.current_owner_has_app_permissions(app_uuid uuid, required_permission_slug text) IS
+COMMENT ON FUNCTION app_hidden.current_owner_has_app_permission(app_uuid uuid, required_permission_slug text) IS
   'If the current user has permission to the app using requested permission slug.';
