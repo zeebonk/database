@@ -35,6 +35,17 @@ COMMENT on column app_dns.is_validated is 'If dns resolves properly from registr
 
 CREATE INDEX app_dns_app_uuid_fk on app_dns (app_uuid);
 
+CREATE FUNCTION apps_default_owner() returns trigger as $$
+  BEGIN
+    NEW.owner_uuid = current_owner_uuid();
+    RETURN NEW;
+  END;
+$$ language plpgsql security definer SET search_path FROM CURRENT;
+
+CREATE TRIGGER _101_apps_default_owner before insert on apps
+  FOR EACH ROW WHEN (new.owner_uuid IS NULL AND new.organization_uuid IS NULL)
+  execute procedure apps_default_owner();
+
 CREATE FUNCTION apps_create_dns() returns trigger as $$
   DECLARE dns hostname default null;
   BEGIN
