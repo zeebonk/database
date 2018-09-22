@@ -1,10 +1,13 @@
 CREATE TABLE organizations(
   uuid                    uuid default uuid_generate_v4() primary key,
   owner_uuid              uuid not null default current_owner_uuid(),
-  name                    title not null
+  name                    title not null,
+  username                alias not null
 );
 COMMENT on table organizations is 'An organization is a collection of many teams, apps and repositories.';
 COMMENT on column organizations.owner_uuid is 'The owner of the Organization.';
+COMMENT on column organizations.name is 'The organization name for visual purposes.';
+COMMENT on column organizations.username is 'The organization username for navigation and internal purposes.';
 
 
 CREATE INDEX ON organizations (owner_uuid);
