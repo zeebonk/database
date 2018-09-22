@@ -4,6 +4,7 @@ CREATE TABLE owners(
   service_id              citext not null,
   is_user                 boolean not null default true,
   username                username not null,
+  createstamp             timestamptz not null default now(),
   name                    citext,
   github_installation_id  int default null
 );
