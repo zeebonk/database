@@ -34,7 +34,7 @@ CREATE TABLE services(
   repo_uuid                  uuid references repos on delete cascade not null,
   organization_uuid          uuid references organizations on delete cascade,
   owner_uuid                 uuid references owners on delete cascade,
-  title                      title not null,
+  name                       alias not null,
   category                   uuid references service_categories on delete set null,
   description                text,
   alias                      alias unique,
@@ -48,7 +48,8 @@ CREATE TABLE services(
     (organization_uuid IS NULL) <> (owner_uuid IS NULL)
   )
 );
-COMMENT on column services.alias is 'The namespace reservation for the container';
+COMMENT on column services.name is 'The namespace used for the project slug (org/service).';
+COMMENT on column services.alias is 'The namespace reservation for the service';
 COMMENT on column services.category is 'The category this service belongs too.';
 COMMENT on column services.pull_url is 'Address where the container can be pulled from.';
 COMMENT on column services.topics is 'GitHub repository topics for searching services.';
@@ -57,6 +58,7 @@ COMMENT on column services.tsvector is E'@omit\nThis field will not be exposed t
 COMMENT on column services.public is 'If the service is publicly available';
 
 CREATE UNIQUE INDEX services_repo_uuid_fk on services (repo_uuid);
+CREATE UNIQUE INDEX services_names on services (organization_uuid, name);
 CREATE INDEX services_tsvector_idx ON services USING GIN (tsvector);
 CREATE INDEX services_organization_uuid_fk on services (organization_uuid);
 CREATE INDEX services_owners_uuid_fk on services (owner_uuid);
