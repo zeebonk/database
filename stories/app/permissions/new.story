@@ -1,3 +1,0 @@
-###
-Add new permission scope
-###
