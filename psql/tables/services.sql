@@ -32,8 +32,7 @@ INSERT INTO service_categories (title, icon, type) values
 CREATE TABLE services(
   uuid                       uuid default uuid_generate_v4() primary key,
   repo_uuid                  uuid references repos on delete cascade not null,
-  organization_uuid          uuid references organizations on delete cascade,
-  owner_uuid                 uuid references owners on delete cascade,
+  owner_uuid                 uuid references owners on delete cascade not null,
   name                       alias not null,
   category                   uuid references service_categories on delete set null,
   description                text,
@@ -43,10 +42,7 @@ CREATE TABLE services(
   is_certified               boolean not null default false,
   links                      jsonb,
   tsvector                   tsvector,
-  public                     boolean not null default false,
-  CONSTRAINT must_have_exactly_one_owner CHECK (
-    (organization_uuid IS NULL) <> (owner_uuid IS NULL)
-  )
+  public                     boolean not null default false
 );
 COMMENT on column services.name is 'The namespace used for the project slug (org/service).';
 COMMENT on column services.alias is 'The namespace reservation for the service';
@@ -58,9 +54,8 @@ COMMENT on column services.tsvector is E'@omit\nThis field will not be exposed t
 COMMENT on column services.public is 'If the service is publicly available';
 
 CREATE UNIQUE INDEX services_repo_uuid_fk on services (repo_uuid);
-CREATE UNIQUE INDEX services_names on services (organization_uuid, name);
+CREATE UNIQUE INDEX services_names on services (owner_uuid, name);
 CREATE INDEX services_tsvector_idx ON services USING GIN (tsvector);
-CREATE INDEX services_organization_uuid_fk on services (organization_uuid);
 CREATE INDEX services_owners_uuid_fk on services (owner_uuid);
 
 CREATE FUNCTION services__update_tsvector() RETURNS trigger AS $$

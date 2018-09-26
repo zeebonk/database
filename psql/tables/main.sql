@@ -1,4 +1,3 @@
-\ir organizations.sql
 \ir permissions.sql
 \ir owners.sql
 \ir repos.sql

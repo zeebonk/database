@@ -20,17 +20,18 @@ COMMENT on column plans.details is 'Sales pitch content.';
 CREATE INDEX plans_service_uuid_fk on plans (service_uuid);
 
 
+-- TODO move this to owners namespace
 CREATE TABLE plan_subscriptions(
   uuid                       uuid default uuid_generate_v4() primary key,
-  organization_uuid          uuid references organizations on delete cascade not null,
+  owner_uuid                 uuid references owners on delete cascade not null,
   plan_uuid                  uuid references plans on delete restrict not null,
   app_uuid                   uuid references repos on delete cascade
 );
-COMMENT on table plan_subscriptions is 'An organization subscriptions to servies.';
-COMMENT on column plan_subscriptions.organization_uuid is 'The owner of the subscription, for billing purposes.';
+COMMENT on table plan_subscriptions is 'An owner subscriptions to servies.';
+COMMENT on column plan_subscriptions.owner_uuid is 'The owner of the subscription, for billing purposes.';
 COMMENT on column plan_subscriptions.plan_uuid is 'Link to the plan subscribing too.';
 COMMENT on column plan_subscriptions.app_uuid is 'If plan is per-app, the app this plan links too.';
 
-CREATE INDEX plan_subscriptions_organization_uuid_fk on plan_subscriptions (organization_uuid);
+CREATE INDEX plan_subscriptions_owner_uuid_fk on plan_subscriptions (owner_uuid);
 CREATE INDEX plan_subscriptions_plan_uuid_fk on plan_subscriptions (plan_uuid);
 CREATE INDEX plan_subscriptions_app_uuid_fk on plan_subscriptions (app_uuid);

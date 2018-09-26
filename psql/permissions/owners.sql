@@ -5,6 +5,13 @@ GRANT SELECT ON owners TO asyncy_visitor;
 
 ----
 
+ALTER TABLE owner_billing ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY select_member ON owner_billing FOR SELECT USING (owner_uuid = ANY (current_owner_organization_uuids(ARRAY['BILLING'])));
+GRANT SELECT ON owner_billing TO asyncy_visitor;
+
+----
+
 ALTER TABLE owner_emails ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY select_own ON owner_emails FOR SELECT USING (owner_uuid = current_owner_uuid());
