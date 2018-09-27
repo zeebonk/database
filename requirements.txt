@@ -1,6 +1,0 @@
-tornado
-storyscript
-docker
-pyyaml
-requests
-raven

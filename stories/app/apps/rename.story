@@ -1,3 +1,0 @@
-###
-Rename your application
-###
