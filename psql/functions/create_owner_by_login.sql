@@ -38,8 +38,6 @@ CREATE FUNCTION app_private.create_owner_by_login(
 
     ELSE
 
-      -- TODO the username will conflict if overlapping with another
-      --      need to append `-N` to the username until no conflict
       INSERT INTO owners (is_user, username, name)
         VALUES (true, $3, $4)
         RETURNING uuid into _owner_uuid;
