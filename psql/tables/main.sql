@@ -7,4 +7,3 @@
 \ir builds.sql
 \ir releases.sql
 \ir tokens.sql
-\ir plans.sql
