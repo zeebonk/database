@@ -1,11 +1,11 @@
 CREATE FUNCTION app_hidden.current_owner_organization_uuids(required_permission_slugs text[] = array[]::text[]) RETURNS uuid[] AS $$
   SELECT array_agg(distinct uuid)
   FROM (
-    SELECT teams.organization_uuid uuid
+    SELECT teams.owner_uuid uuid
     FROM team_members
     INNER JOIN teams ON (team_members.team_uuid = teams.uuid)
     WHERE team_members.owner_uuid = current_owner_uuid()
-    GROUP BY teams.organization_uuid
+    GROUP BY teams.owner_uuid
     HAVING
       (
         cardinality(required_permission_slugs) = 0
@@ -19,10 +19,6 @@ CREATE FUNCTION app_hidden.current_owner_organization_uuids(required_permission_
           AND permissions.slug = ANY(required_permission_slugs)
         ) @> required_permission_slugs -- `@>` means "contains"
       )
-  UNION
-    SELECT uuid
-    FROM organizations
-    WHERE owner_uuid = current_owner_uuid()
   ) a
 $$ LANGUAGE sql STABLE SECURITY DEFINER SET search_path FROM CURRENT;
 

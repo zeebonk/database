@@ -1,4 +1,3 @@
-\ir organizations.sql
 \ir permissions.sql
 \ir owners.sql
 \ir repos.sql
@@ -8,4 +7,3 @@
 \ir builds.sql
 \ir releases.sql
 \ir tokens.sql
-\ir plans.sql

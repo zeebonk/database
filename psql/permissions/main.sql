@@ -1,6 +1,5 @@
 \ir ./apps.sql
 \ir ./builds.sql
-\ir ./organizations.sql
 \ir ./owners.sql
 \ir ./teams.sql
 \ir ./permissions.sql

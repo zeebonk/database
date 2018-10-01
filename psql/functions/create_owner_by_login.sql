@@ -7,14 +7,16 @@ CREATE FUNCTION app_private.create_owner_by_login(
     oauth_token text
 ) RETURNS json AS $$
   DECLARE _owner_uuid uuid DEFAULT NULL;
+  DECLARE _owner_service_uuid uuid DEFAULT NULL;
   DECLARE _token_uuid uuid DEFAULT NULL;
   BEGIN
 
     -- TODO IF (service, username) conflict THEN need to truncate the other username
     -- TODO IF (service, service_id) conflict THEN need to update the username
 
-    SELECT uuid into _owner_uuid
-      FROM owners o
+    SELECT uuid, owner_uuid
+      INTO _owner_service_uuid, _owner_uuid
+      FROM owner_services o
       WHERE o.service=$1
         AND o.service_id=$2
       LIMIT 1;
@@ -22,10 +24,12 @@ CREATE FUNCTION app_private.create_owner_by_login(
     IF _owner_uuid IS NOT NULL THEN
 
       -- update their oauth token
-      UPDATE app_private.owner_secrets
+      UPDATE app_private.owner_service_secrets
         SET oauth_token=$6
-        WHERE owner_uuid=_owner_uuid;
+        WHERE owner_service_uuid=_owner_service_uuid;
 
+      -- select an existing login token
+      -- TODO create new tokens based on the IP/source of login
       SELECT uuid into _token_uuid
         FROM tokens
         WHERE owner_uuid=_owner_uuid
@@ -34,16 +38,19 @@ CREATE FUNCTION app_private.create_owner_by_login(
 
     ELSE
 
-      INSERT INTO owners (service, service_id, is_user, username, name)
-        VALUES ($1, $2, true, $3, $4)
+      INSERT INTO owners (is_user, username, name)
+        VALUES (true, $3, $4)
         RETURNING uuid into _owner_uuid;
+
+      INSERT INTO owner_services (owner_uuid, service, service_id, username)
+        VALUES (_owner_uuid, $1, $2, $3)
+        RETURNING uuid into _owner_service_uuid;
 
       INSERT INTO owner_emails (owner_uuid, email, is_verified)
         VALUES (_owner_uuid, $5, true);
 
-      UPDATE app_private.owner_secrets
-        SET oauth_token=$6
-        WHERE owner_uuid=_owner_uuid;
+      INSERT INTO app_private.owner_service_secrets (owner_service_uuid, oauth_token)
+        VALUES (_owner_service_uuid, $6);
 
     END IF;
 
