@@ -5,10 +5,10 @@ GRANT SELECT ON owners TO asyncy_visitor;
 
 ----
 
-ALTER TABLE owner_services ENABLE ROW LEVEL SECURITY;
+ALTER TABLE owner_vcs ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY select_own ON owner_services FOR SELECT USING (owner_uuid = current_owner_uuid());
-GRANT SELECT ON owner_services TO asyncy_visitor;
+CREATE POLICY select_own ON owner_vcs FOR SELECT USING (owner_uuid = current_owner_uuid());
+GRANT SELECT ON owner_vcs TO asyncy_visitor;
 
 ----
 
