@@ -7,7 +7,7 @@ CREATE FUNCTION app_private.create_owner_by_login(
     oauth_token text
 ) RETURNS json AS $$
   DECLARE _owner_uuid uuid DEFAULT NULL;
-  DECLARE _owner_service_uuid uuid DEFAULT NULL;
+  DECLARE _owner_vcs_uuid uuid DEFAULT NULL;
   DECLARE _token_uuid uuid DEFAULT NULL;
   BEGIN
 
@@ -15,8 +15,8 @@ CREATE FUNCTION app_private.create_owner_by_login(
     -- TODO IF (service, service_id) conflict THEN need to update the username
 
     SELECT uuid, owner_uuid
-      INTO _owner_service_uuid, _owner_uuid
-      FROM owner_services o
+      INTO _owner_vcs_uuid, _owner_uuid
+      FROM owner_vcs o
       WHERE o.service=$1
         AND o.service_id=$2
       LIMIT 1;
@@ -24,9 +24,9 @@ CREATE FUNCTION app_private.create_owner_by_login(
     IF _owner_uuid IS NOT NULL THEN
 
       -- update their oauth token
-      UPDATE app_private.owner_service_secrets
+      UPDATE app_private.owner_vcs_secrets
         SET oauth_token=$6
-        WHERE owner_service_uuid=_owner_service_uuid;
+        WHERE owner_vcs_uuid=_owner_vcs_uuid;
 
       -- select an existing login token
       -- TODO create new tokens based on the IP/source of login
@@ -42,15 +42,15 @@ CREATE FUNCTION app_private.create_owner_by_login(
         VALUES (true, $3, $4)
         RETURNING uuid into _owner_uuid;
 
-      INSERT INTO owner_services (owner_uuid, service, service_id, username)
+      INSERT INTO owner_vcs (owner_uuid, service, service_id, username)
         VALUES (_owner_uuid, $1, $2, $3)
-        RETURNING uuid into _owner_service_uuid;
+        RETURNING uuid into _owner_vcs_uuid;
 
       INSERT INTO owner_emails (owner_uuid, email, is_verified)
         VALUES (_owner_uuid, $5, true);
 
-      INSERT INTO app_private.owner_service_secrets (owner_service_uuid, oauth_token)
-        VALUES (_owner_service_uuid, $6);
+      INSERT INTO app_private.owner_vcs_secrets (owner_vcs_uuid, oauth_token)
+        VALUES (_owner_vcs_uuid, $6);
 
     END IF;
 
