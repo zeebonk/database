@@ -3,6 +3,5 @@
 \ir ./owners.sql
 \ir ./teams.sql
 \ir ./permissions.sql
-\ir ./plans.sql
 \ir ./releases.sql
 \ir ./services.sql

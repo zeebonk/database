@@ -105,3 +105,9 @@ COMMENT on column service_plans.details is 'Sales pitch content.';
 -- COMMENT on column plans.price_rate is 'The rate to multiple the quanity.';
 
 CREATE INDEX service_plans_service_uuid_fk on service_plans (service_uuid);
+
+ALTER TABLE app_private.owner_subscriptions
+  ADD CONSTRAINT fk_plan_uuid
+  FOREIGN KEY (plan_uuid)
+  REFERENCES service_plans(uuid)
+  ON DELETE RESTRICT;

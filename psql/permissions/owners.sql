@@ -31,3 +31,12 @@ GRANT INSERT (owner_uuid, email) ON owner_emails TO asyncy_visitor;
 
 CREATE POLICY delete_own ON owner_emails FOR DELETE USING (owner_uuid = current_owner_uuid());
 GRANT DELETE ON owner_emails TO asyncy_visitor;
+
+----
+
+ALTER TABLE app_private.owner_subscriptions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY select_billing ON app_private.owner_subscriptions FOR SELECT USING (owner_uuid = ANY(current_owner_organization_uuids(ARRAY['BILLING'])));
+GRANT SELECT ON app_private.owner_subscriptions TO asyncy_visitor;
+
+-- Do not grant INSERT, UPDATE, DELETE - these permissions are managed by the system, not users.

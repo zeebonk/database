@@ -61,11 +61,11 @@ COMMENT on column app_private.owner_billing.email is 'Where to send receipts to.
 CREATE TABLE app_private.owner_subscriptions(
   uuid                       uuid default uuid_generate_v4() primary key,
   owner_uuid                 uuid references owners on delete cascade not null,
-  plan_uuid                  uuid references service_plans on delete restrict not null
+  plan_uuid                  uuid not null -- DIFFERED references service_plans on delete restrict
 );
-COMMENT on table plan_subscriptions is 'An owner subscriptions to servies.';
-COMMENT on column plan_subscriptions.owner_uuid is 'The owner of the subscription, for billing purposes.';
-COMMENT on column plan_subscriptions.plan_uuid is 'Link to the plan subscribing too.';
+COMMENT on table app_private.owner_subscriptions is 'An owner subscriptions to servies.';
+COMMENT on column app_private.owner_subscriptions.owner_uuid is 'The owner of the subscription, for billing purposes.';
+COMMENT on column app_private.owner_subscriptions.plan_uuid is 'Link to the plan subscribing too.';
 
 CREATE INDEX owner_subscriptions_owner_uuid_fk on app_private.owner_subscriptions (owner_uuid);
 CREATE INDEX owner_subscriptions_plan_uuid_fk on app_private.owner_subscriptions (plan_uuid);
