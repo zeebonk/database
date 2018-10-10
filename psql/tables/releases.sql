@@ -6,7 +6,7 @@ CREATE TABLE releases(
   owner_uuid              uuid not null default current_owner_uuid() references owners on delete set null,
   timestamp               timestamptz not null default now(),
   state                   release_state not null default 'QUEUED'::release_state,
-  payload                 jsonb not null,
+  payload                 jsonb not null default '{"__default__":true}'::jsonb,
   primary key (app_uuid, id)
 );
 COMMENT on table releases is 'Identifying the active version of the application.';
@@ -44,7 +44,7 @@ CREATE TRIGGER _100_releases_next_id_insert before insert on releases
 CREATE FUNCTION releases_defaults() returns trigger as $$
   begin
     -- set payload and config to the previous release when empty
-    if new.payload is null then
+    if new.payload.__default__ is true then
       new.payload := (select payload from releases where app_uuid=new.app_uuid and id=new.id-1 limit 1);
     end if;
     if new.config is null then
