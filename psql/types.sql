@@ -32,3 +32,5 @@ CREATE TYPE token_type as enum('API', 'LOGIN', 'APP');
 CREATE TYPE category_type as enum('SERVICE', 'FUNCTION');
 
 CREATE TYPE environment as enum('PRODUCTION', 'STAGING', 'DEV');
+
+CREATE TYPE http_method as enum('POST', 'GET', 'PUT', 'DELETE');
