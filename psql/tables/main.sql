@@ -7,3 +7,4 @@
 \ir builds.sql
 \ir releases.sql
 \ir tokens.sql
+\ir subscriptions.sql

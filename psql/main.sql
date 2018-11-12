@@ -5,7 +5,8 @@ CREATE EXTENSION "citext" WITH SCHEMA public;
 CREATE SCHEMA app_public;
 CREATE SCHEMA app_hidden;
 CREATE SCHEMA app_private;
-SET search_path to app_public, app_hidden, app_private, public;
+CREATE SCHEMA app_runtime;
+SET search_path to app_public, app_hidden, app_private, app_runtime, public;
 
 DO $$
 BEGIN
