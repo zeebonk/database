@@ -9,7 +9,7 @@ This is the Asyncy database bootstrap tool, which creates the schemas and tables
   - `create database asyncy;`
   - `\q`
 4. Clone this project
-5. Run `make DB=asyncy` in the cloned project
+5. Run `make reset DB=asyncy` in the cloned project
 
 Here's what your output should look like:
 ```shell
@@ -20,7 +20,7 @@ Type "help" for help.
 postgres=# create database asyncy;
 CREATE DATABASE
 postgres=# \q
-$ make DB=asyncy
+$ make reset DB=asyncy
 ...
 ...
 $
