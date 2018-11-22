@@ -14,7 +14,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql VOLATILE SECURITY DEFINER;
 
 CREATE TRIGGER _900_insert_organization_admin
   AFTER INSERT ON owners
