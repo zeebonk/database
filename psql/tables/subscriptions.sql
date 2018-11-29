@@ -4,6 +4,6 @@ CREATE TABLE app_runtime.subscriptions (
   url              text                                          NOT NULL,
   method           http_method                                   NOT NULL,
   payload          jsonb                                         NOT NULL,
-  k8s_container_id text                                          NOT NULL UNIQUE,
+  k8s_container_id text                                          NOT NULL,
   k8s_pod_name     text                                          NOT NULL
 );
