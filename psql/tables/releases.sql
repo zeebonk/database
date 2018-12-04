@@ -6,6 +6,7 @@ CREATE TABLE releases(
   owner_uuid              uuid not null default current_owner_uuid() references owners on delete set null,
   timestamp               timestamptz not null default now(),
   state                   release_state not null default 'QUEUED'::release_state,
+  source                  release_source not null default 'CODE_UPDATE'::release_source,
   payload                 jsonb default '{"__default__": "true"}'::jsonb,
   primary key (app_uuid, id)
 );
@@ -17,6 +18,7 @@ COMMENT on column releases.message is 'User defined release message.';
 COMMENT on column releases.owner_uuid is 'The person who submitted the release.';
 COMMENT on column releases.timestamp is 'Time when release was first created.';
 COMMENT on column releases.state is 'Identifying which release is active or rolling in/out.';
+COMMENT on column releases.source is 'Identifying the cause of this release, whether it was because of a config change, a code update, or a rollback.';
 COMMENT on column releases.payload is 'An object containing the full payload of Storyscripts, e.g., {"foobar": {"1": ...}}';
 
 CREATE TABLE app_private.release_numbers (
