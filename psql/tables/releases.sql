@@ -62,7 +62,9 @@ CREATE TRIGGER _101_releases_defaults before insert on releases
 CREATE FUNCTION releases_notify() returns trigger as $$
   begin
     -- publish new releases to the channel "release"
-    perform pg_notify('release', cast(new.app_uuid as text));
+    if new.state != 'NO_DEPLOY'::release_state then
+      perform pg_notify('release', cast(new.app_uuid as text));
+    end if;
     return null;
   end;
 $$ language plpgsql security definer SET search_path FROM CURRENT;
