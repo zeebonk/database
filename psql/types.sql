@@ -25,7 +25,9 @@ CREATE TYPE billing_region as enum('US', 'EU');
 
 CREATE TYPE build_state as enum('QUEUED', 'BUILDING', 'SUCCESS', 'FAILURE', 'ERROR');
 
-CREATE TYPE release_state as enum('PREVIOUS', 'ACTIVE', 'NEXT', 'ROLLBACK', 'QUEUED');
+CREATE TYPE release_state as enum('QUEUED', 'DEPLOYING', 'DEPLOYED', 'TERMINATING', 'TERMINATED', 'NO_DEPLOY');
+
+CREATE TYPE release_source as enum('CONFIG_UPDATE', 'CODE_UPDATE', 'ROLLBACK');
 
 CREATE TYPE token_type as enum('API', 'LOGIN', 'APP');
 

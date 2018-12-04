@@ -6,6 +6,7 @@ CREATE TABLE releases(
   owner_uuid              uuid not null default current_owner_uuid() references owners on delete set null,
   timestamp               timestamptz not null default now(),
   state                   release_state not null default 'QUEUED'::release_state,
+  source                  release_source not null default 'CODE_UPDATE'::release_source,
   payload                 jsonb default '{"__default__": "true"}'::jsonb,
   primary key (app_uuid, id)
 );
