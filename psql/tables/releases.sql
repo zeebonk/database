@@ -69,5 +69,5 @@ CREATE FUNCTION releases_notify() returns trigger as $$
   end;
 $$ language plpgsql security definer SET search_path FROM CURRENT;
 
-CREATE TRIGGER _900_releases_notify after insert or update on releases
+CREATE TRIGGER _900_releases_notify after insert on releases
   for each row execute procedure releases_notify();
