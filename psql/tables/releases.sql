@@ -71,3 +71,41 @@ $$ language plpgsql security definer SET search_path FROM CURRENT;
 
 CREATE TRIGGER _900_releases_notify after insert on releases
   for each row execute procedure releases_notify();
+
+CREATE FUNCTION release_post_deployed() returns trigger as $$
+  begin
+    -- When a release is deployed, check to see if there are
+    -- previous releases in the 'queued' state. If yes, then set their
+    -- state to `skipped_concurrent`.
+
+    update releases set state = 'SKIPPED_CONCURRENT'::release_state
+      where app_uuid=old.app_uuid
+        and state = 'QUEUED'::release_state
+        and id < new.id;
+
+    -- Update all previous releases which are in the state of
+    -- deployed, deploying, terminating to terminated.
+    update releases set state = 'TERMINATED'::release_state
+      where app_uuid=old.app_uuid
+            and state in ('DEPLOYED'::release_state,
+                          'DEPLOYING'::release_state,
+                          'TERMINATING'::release_state)
+            and id < new.id;
+
+    -- Lastly, if there are any new releases in the queued state,
+    -- notify the release channel.
+    if exists (
+              select 1 from releases
+              where app_uuid = old.app_uuid
+              and id > new.id
+              and state = 'QUEUED'::release_state) then
+      perform pg_notify('release', cast(new.app_uuid as text));
+    end if;
+    return null;
+  end;
+$$ language plpgsql security definer SET search_path FROM CURRENT;
+
+CREATE TRIGGER _901_releases_queued_check after update on releases
+    for EACH ROW
+    when (old.state is distinct from new.state and new.state = 'DEPLOYED'::release_state)
+    execute procedure release_post_deployed();
