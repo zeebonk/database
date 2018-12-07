@@ -8,3 +8,4 @@
 \ir releases.sql
 \ir tokens.sql
 \ir subscriptions.sql
+\ir beta_users.sql
