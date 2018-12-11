@@ -26,6 +26,24 @@ CREATE TABLE app_private.release_numbers (
   release_number          int not null default 1
 );
 
+CREATE FUNCTION releases_check_app_if_app_deleted() returns trigger as $$
+  begin
+    if exists (
+              select 1 from apps
+              where uuid = new.app_uuid
+                    and deleted = false) then
+      return new;
+    end if;
+    raise 'Once an app is destroyed, no deployments are permitted to it.';
+  end;
+$$ language plpgsql security definer SET search_path FROM CURRENT;
+
+
+CREATE TRIGGER _050_releases_check_app_if_app_deleted before insert on releases
+  for each row execute procedure releases_check_app_if_app_deleted();
+
+---
+
 CREATE FUNCTION releases_next_id() returns trigger as $$
   declare
     v_next_value int;
