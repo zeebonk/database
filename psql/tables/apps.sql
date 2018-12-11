@@ -34,7 +34,7 @@ CREATE FUNCTION app_updated_notify() returns trigger as $$
   end;
 $$ language plpgsql security definer SET search_path FROM CURRENT;
 
-CREATE TRIGGER _100_app_updated_notify() after update on apps
+CREATE TRIGGER _100_app_updated_notify after update on apps
   for each row
   when (old.maintenance is distinct from new.maintenance or new.deleted=true)
-  execute procedure app_updated();
+  execute procedure app_updated_notify();
