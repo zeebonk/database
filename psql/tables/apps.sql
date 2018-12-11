@@ -33,6 +33,7 @@ CREATE INDEX app_dns_app_uuid_fk on app_dns (app_uuid);
 CREATE FUNCTION app_updated_notify() returns trigger as $$
   begin
     perform pg_notify('release', cast(old.uuid as text));
+    return null;
   end;
 $$ language plpgsql security definer SET search_path FROM CURRENT;
 
