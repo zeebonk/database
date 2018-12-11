@@ -27,3 +27,31 @@ COMMENT on column app_dns.hostname is 'A full hostname entry such as foobar.asyn
 COMMENT on column app_dns.is_validated is 'If dns resolves properly from registry.';
 
 CREATE INDEX app_dns_app_uuid_fk on app_dns (app_uuid);
+
+---
+
+CREATE FUNCTION app_updated_notify() returns trigger as $$
+  begin
+    perform pg_notify('release', cast(old.uuid as text));
+    return null;
+  end;
+$$ language plpgsql security definer SET search_path FROM CURRENT;
+
+CREATE TRIGGER _100_app_updated_notify after update on apps
+  for each row
+  when (old.maintenance is distinct from new.maintenance or new.deleted=true)
+  execute procedure app_updated_notify();
+
+---
+
+CREATE FUNCTION app_prevent_restore() returns trigger as $$
+  begin
+    if old.deleted is true then
+      raise 'Once an app is destroyed, no updates are permitted to it.';
+    end if;
+    return new;
+  end;
+$$ language plpgsql security definer SET search_path FROM CURRENT;
+
+CREATE TRIGGER _50_app_prevent_restore before update on apps
+  for each row execute procedure app_prevent_restore();
