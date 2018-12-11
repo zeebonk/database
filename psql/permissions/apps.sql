@@ -8,8 +8,8 @@ CREATE POLICY insert_own ON apps FOR INSERT WITH CHECK (owner_uuid = current_own
 CREATE POLICY insert_organization ON apps FOR INSERT WITH CHECK (current_owner_has_organization_permission(owner_uuid, 'CREATE_APP'));
 GRANT INSERT ON apps TO asyncy_visitor;
 
-CREATE POLICY update_own ON apps FOR UPDATE WITH CHECK (owner_uuid = current_owner_uuid());
-CREATE POLICY update_organization ON apps FOR UPDATE WITH CHECK (current_owner_has_organization_permission(owner_uuid, 'CREATE_APP'));
+CREATE POLICY update_own ON apps FOR UPDATE USING (owner_uuid = current_owner_uuid());
+CREATE POLICY update_organization ON apps FOR UPDATE USING (current_owner_has_organization_permission(owner_uuid, 'CREATE_APP'));
 GRANT UPDATE ON apps TO asyncy_visitor;
 
 ---
