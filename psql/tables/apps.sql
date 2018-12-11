@@ -47,7 +47,7 @@ CREATE TRIGGER _100_app_updated_notify after update on apps
 CREATE FUNCTION app_prevent_restore() returns trigger as $$
   begin
     if old.deleted is true then
-      return null;
+      raise 'Once an app is destroyed, no updates are permitted to it.';
     end if;
     return new;
   end;
