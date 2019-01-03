@@ -21,7 +21,7 @@ BEGIN
   NEW.owner_uuid = (SELECT owner_uuid FROM teams WHERE uuid = NEW.team_uuid);
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql VOLATILE SET search_path FROM CURRENT;
 
 CREATE TRIGGER _200_denormalize_owner_uuid
   BEFORE INSERT ON team_permissions
