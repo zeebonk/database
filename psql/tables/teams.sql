@@ -16,18 +16,6 @@ CREATE TABLE team_permissions (
   PRIMARY KEY (team_uuid, permission_slug, owner_uuid)
 );
 
-CREATE FUNCTION tg_team_permissions__denormalize_owner_uuid() RETURNS TRIGGER AS $$
-BEGIN
-  NEW.owner_uuid = (SELECT owner_uuid FROM teams WHERE uuid = NEW.team_uuid);
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql VOLATILE SET search_path FROM CURRENT;
-
-CREATE TRIGGER _200_denormalize_owner_uuid
-  BEFORE INSERT ON team_permissions
-  FOR EACH ROW
-  EXECUTE PROCEDURE tg_team_permissions__denormalize_owner_uuid();
-
 CREATE TRIGGER _500_abort_on_team_owner_change
   BEFORE UPDATE ON teams
   FOR EACH ROW
