@@ -12,21 +12,9 @@ CREATE INDEX teams_owner_uuid_fk on teams (owner_uuid);
 CREATE TABLE team_permissions (
   team_uuid               uuid not null references teams on delete cascade,
   permission_slug         text not null references permissions on delete restrict,
-  owner_uuid              uuid not null default uuid_nil() references owners on delete cascade,
-  PRIMARY KEY (team_uuid, permission_slug)
+  owner_uuid              uuid not null references owners on delete cascade,
+  PRIMARY KEY (team_uuid, permission_slug, owner_uuid)
 );
-
-CREATE FUNCTION tg_team_permissions__denormalize_owner_uuid() RETURNS TRIGGER AS $$
-BEGIN
-  NEW.owner_uuid = (SELECT owner_uuid FROM teams WHERE uuid = NEW.team_uuid);
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql VOLATILE;
-
-CREATE TRIGGER _200_denormalize_owner_uuid
-  BEFORE INSERT ON team_permissions
-  FOR EACH ROW
-  EXECUTE PROCEDURE tg_team_permissions__denormalize_owner_uuid();
 
 CREATE TRIGGER _500_abort_on_team_owner_change
   BEFORE UPDATE ON teams
